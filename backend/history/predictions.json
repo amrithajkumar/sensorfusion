@@ -1,0 +1,9 @@
+[
+    {
+        "timestamp": "2026-07-22T15:49:13.944967",
+        "filename": "annavizhi.jpg",
+        "sensor": "thermal",
+        "prediction": "Drone",
+        "confidence": 0.94
+    }
+]

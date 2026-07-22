@@ -1,12 +1,26 @@
-import os
-from fastapi import APIRouter, UploadFile, File
+from pathlib import Path
 
+from fastapi import APIRouter, File, UploadFile
+
+from config import settings
+from logs.logger import logger
+from schemas.response import (
+    FeatureResponse,
+    HealthResponse,
+    PredictionResponse,
+)
+from services.dataset_service import DatasetService
+from services.feature_service import FeatureService
+from services.history_service import HistoryService
 from services.inference import InferenceService
-from schemas.response import PredictionResponse, HealthResponse
+from utils.validators import validate_file
 
 router = APIRouter()
 
-service = InferenceService()
+dataset_service = DatasetService()
+feature_service = FeatureService()
+inference_service = InferenceService()
+history_service = HistoryService()
 
 
 @router.get("/")
@@ -16,42 +30,103 @@ def home():
     }
 
 
-@router.get(
-    "/health",
-    response_model=HealthResponse
-)
+@router.get("/health", response_model=HealthResponse)
 def health():
 
+    logger.info("Health endpoint accessed")
+
     return HealthResponse(
-        status="Healthy"
+        status="healthy"
     )
 
 
-@router.get(
-    "/predict",
-    response_model=PredictionResponse
-)
+@router.get("/dataset")
+def dataset_summary():
+
+    logger.info("Dataset summary requested")
+
+    return dataset_service.get_dataset_summary()
+
+
+@router.get("/predict", response_model=PredictionResponse)
 def predict():
 
-    prediction = service.predict(
-    sensor_type="thermal",
-    filename="sample.mp4"
-)
+    logger.info("Prediction endpoint accessed")
 
-    return PredictionResponse(**prediction)
+    result = inference_service.predict(
+        sensor_type="thermal",
+        file_path=Path("dummy")
+    )
+
+    return PredictionResponse(
+        prediction=result["prediction"],
+        confidence=result["confidence"],
+        detected=result["detected"]
+    )
+
+
+@router.get("/features/{sensor}", response_model=FeatureResponse)
+def get_features(sensor: str):
+
+    logger.info(
+        f"Feature extraction requested | Sensor={sensor}"
+    )
+
+    result = feature_service.extract_features(
+        sensor,
+        Path("dummy")
+    )
+
+    return FeatureResponse(**result)
+
+
 @router.post("/upload")
-async def upload_file(file: UploadFile = File(...)):
+async def upload_file(
+    sensor: str,
+    file: UploadFile = File(...)
+):
 
-    upload_folder = "uploads"
+    logger.info(
+        f"Upload received | Sensor={sensor} | File={file.filename}"
+    )
 
-    os.makedirs(upload_folder, exist_ok=True)
+    validate_file(
+        sensor,
+        file.filename
+    )
 
-    file_path = os.path.join(upload_folder, file.filename)
+    settings.UPLOAD_DIR.mkdir(
+        parents=True,
+        exist_ok=True
+    )
+
+    file_path = settings.UPLOAD_DIR / file.filename
 
     with open(file_path, "wb") as buffer:
         buffer.write(await file.read())
 
+    logger.info(
+        f"File saved at {file_path}"
+    )
+
+    prediction = inference_service.predict(
+        sensor,
+        file_path
+    )
+
+    history_service.save_prediction(
+        filename=file.filename,
+        sensor=sensor,
+        prediction=prediction["prediction"],
+        confidence=prediction["confidence"]
+    )
+
+    logger.info(
+        "Prediction completed successfully"
+    )
+
     return {
         "filename": file.filename,
-        "status": "uploaded"
+        "status": "uploaded",
+        "result": prediction
     }
