@@ -11,16 +11,36 @@ class DatasetLoader:
     2. Count dataset files.
     3. Return thermal infrared videos.
     4. Return acoustic audio files.
-    5. Return radar files.
+    5. Return radar point cloud files.
     """
 
     def __init__(self, dataset_root="datasets"):
 
         self.dataset_root = Path(dataset_root)
 
-        self.thermal_path = self.dataset_root / "thermal" / "raw"/ "archive"
-        self.acoustic_path = self.dataset_root / "acoustic" / "raw"/ "archive (1)"
-        self.radar_path = self.dataset_root / "radar" / "raw"/ "Mavic2"
+        # Thermal Dataset
+        self.thermal_path = (
+            self.dataset_root /
+            "thermal" /
+            "raw" /
+            "archive"
+        )
+
+        # Acoustic Dataset
+        self.acoustic_path = (
+            self.dataset_root /
+            "acoustic" /
+            "raw" /
+            "archive (1)"
+        )
+
+        # Radar Dataset
+        self.radar_path = (
+            self.dataset_root /
+            "radar" /
+            "raw" /
+            "Mavic2"
+        )
 
     # ==========================================================
     # Verify Dataset Structure
@@ -52,16 +72,32 @@ class DatasetLoader:
 
     def count_files(self):
 
-        thermal_files = list(self.thermal_path.rglob("*"))
-        acoustic_files = list(self.acoustic_path.rglob("*"))
-        radar_files = list(self.radar_path.rglob("*"))
+        thermal_files = [
+            file
+            for file in self.thermal_path.rglob("*")
+            if file.is_file()
+        ]
 
-        print("\nDataset Summary")
-        print("-" * 45)
+        acoustic_files = [
+            file
+            for file in self.acoustic_path.rglob("*")
+            if file.is_file()
+        ]
 
-        print(f"Thermal files : {len(thermal_files)}")
-        print(f"Acoustic files: {len(acoustic_files)}")
-        print(f"Radar files   : {len(radar_files)}")
+        radar_files = [
+            file
+            for file in self.radar_path.rglob("*.npy")
+        ]
+
+        print("\n" + "=" * 50)
+        print("DATASET SUMMARY")
+        print("=" * 50)
+
+        print(f"Thermal Files : {len(thermal_files)}")
+        print(f"Acoustic Files: {len(acoustic_files)}")
+        print(f"Radar Files   : {len(radar_files)}")
+
+        print("=" * 50)
 
     # ==========================================================
     # Thermal Dataset
@@ -72,9 +108,9 @@ class DatasetLoader:
         Returns all infrared thermal videos.
         """
 
-        videos = sorted(self.thermal_path.rglob("infrared.mp4"))
-
-        return videos
+        return sorted(
+            self.thermal_path.rglob("infrared.mp4")
+        )
 
     # ==========================================================
     # Acoustic Dataset
@@ -93,8 +129,10 @@ class DatasetLoader:
             "*.flac"
         ]
 
-        for ext in extensions:
-            audio_files.extend(self.acoustic_path.rglob(ext))
+        for extension in extensions:
+            audio_files.extend(
+                self.acoustic_path.rglob(extension)
+            )
 
         return sorted(audio_files)
 
@@ -104,12 +142,12 @@ class DatasetLoader:
 
     def get_radar_files(self):
         """
-        Returns every radar file.
+        Returns all radar point cloud (.npy) files.
         """
 
-        radar_files = sorted(self.radar_path.rglob("*"))
-
-        return radar_files
+        return sorted(
+            self.radar_path.rglob("*.npy")
+        )
 
 
 # ==============================================================
@@ -128,9 +166,9 @@ if __name__ == "__main__":
     acoustic_files = loader.get_acoustic_files()
     radar_files = loader.get_radar_files()
 
-    print("\n" + "=" * 45)
+    print("\n" + "=" * 50)
     print("DATASET INFORMATION")
-    print("=" * 45)
+    print("=" * 50)
 
     print(f"Thermal Videos : {len(thermal_videos)}")
     print(f"Acoustic Files : {len(acoustic_files)}")
@@ -147,3 +185,5 @@ if __name__ == "__main__":
     if radar_files:
         print("\nFirst Radar File:")
         print(radar_files[0])
+
+    print("\nDataset Loader test completed successfully!")

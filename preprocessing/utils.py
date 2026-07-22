@@ -99,8 +99,8 @@ def save_image(image: np.ndarray, output_path: Path) -> None:
     """
     Save image to disk.
     """
-
     cv2.imwrite(str(output_path), image)
+    
 if __name__ == "__main__":
     test_folder = Path("test_output")
     create_directory(test_folder)

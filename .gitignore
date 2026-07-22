@@ -225,3 +225,18 @@ datasets/thermal/raw/**
 !datasets/acoustic/raw/.gitkeep
 !datasets/radar/raw/.gitkeep
 !datasets/thermal/raw/.gitkeep
+
+# Virtual Environment
+.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Processed datasets
+datasets/thermal/processed/
+datasets/acoustic/processed/
+datasets/radar/processed/
+
+# Logs
+*.log

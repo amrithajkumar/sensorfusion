@@ -12,8 +12,7 @@ Author: Quantum Fusion Team
 """
 
 from pathlib import Path
-
-from dataset_loader import DatasetLoader
+from preprocessing.dataset_loader import DatasetLoader
 from utils import (
     create_directory,
     extract_frames,
@@ -122,6 +121,7 @@ class ThermalPreprocessor:
             self.process_video(video)
 
         print("\nThermal preprocessing completed successfully!")
+        
 
     def run(self):
         """
