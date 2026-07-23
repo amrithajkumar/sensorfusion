@@ -240,3 +240,17 @@ datasets/radar/processed/
 
 # Logs
 *.log
+# Generated feature files
+datasets/**/features/
+datasets/**/sequence_features/
+
+# Raw datasets (if they are large)
+datasets/**/processed/
+datasets/**/raw/
+
+# Python
+__pycache__/
+*.pyc
+
+# Virtual environment
+.venv/
