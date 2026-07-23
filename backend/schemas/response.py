@@ -9,3 +9,8 @@ class PredictionResponse(BaseModel):
 
 class HealthResponse(BaseModel):
     status: str
+
+
+class FeatureResponse(BaseModel):
+    sensor: str
+    features: list[float]
