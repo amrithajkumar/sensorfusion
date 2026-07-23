@@ -254,3 +254,14 @@ __pycache__/
 
 # Virtual environment
 .venv/
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Generated outputs
+results/
+
+# OS files
+.DS_Store
+Thumbs.db
