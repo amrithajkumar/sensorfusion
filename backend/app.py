@@ -1,9 +1,9 @@
 from fastapi import FastAPI
 
-from api.routes import router
-from config import settings
-from exceptions.handlers import register_exception_handlers
-from logs.logger import logger
+from backend.api.routes import router
+from backend.config import settings
+from backend.exceptions.handlers import register_exception_handlers
+from backend.logs.logger import logger
 
 app = FastAPI(
     title=settings.PROJECT_NAME

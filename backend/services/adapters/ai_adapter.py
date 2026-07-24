@@ -1,43 +1,24 @@
 from pathlib import Path
 
+from backend.ai.radar.extractor import RadarExtractor
+from backend.ai.thermal.extractor import ThermalExtractor
+from backend.ai.acoustic.extractor import AcousticExtractor
+
 
 class AIAdapter:
-    """
-    Adapter between the backend and the AI module.
 
-    Today:
-        Uses dummy feature vectors.
+    def __init__(self):
 
-    Later:
-        Calls the real feature extraction functions.
-    """
-
-    def extract_thermal(self, file_path: Path):
-
-        return [
-            0.25,
-            0.48,
-            0.91,
-            0.67,
-            0.12
-        ]
-
-    def extract_acoustic(self, file_path: Path):
-
-        return [
-            0.83,
-            0.42,
-            0.18,
-            0.91,
-            0.37
-        ]
+        self.radar = RadarExtractor()
+        self.acoustic = AcousticExtractor()
+        self.thermal = ThermalExtractor()
 
     def extract_radar(self, file_path: Path):
+        return self.radar.extract(file_path)
 
-        return [
-            0.62,
-            0.15,
-            0.77,
-            0.94,
-            0.51
-        ]
+    def extract_acoustic(self, file_path: Path):
+        return self.acoustic.extract(file_path)
+
+    def extract_thermal(self, file_path: Path):
+        return self.thermal.extract(file_path)
+    

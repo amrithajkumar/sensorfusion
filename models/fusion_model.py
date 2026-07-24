@@ -5,8 +5,8 @@ import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 
-from utils.metrics import Metrics
-from utils.evaluator import Evaluator
+from backend.utils.metrics import Metrics
+from backend.utils.evaluator import Evaluator
 
 
 class FusionModel:

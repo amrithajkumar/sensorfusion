@@ -2,18 +2,18 @@ from pathlib import Path
 
 from fastapi import APIRouter, File, UploadFile
 
-from config import settings
-from logs.logger import logger
-from schemas.response import (
+from backend.config import settings
+from backend.logs.logger import logger
+from backend.schemas.response import (
     FeatureResponse,
     HealthResponse,
     PredictionResponse,
 )
-from services.dataset_service import DatasetService
-from services.feature_service import FeatureService
-from services.history_service import HistoryService
-from services.inference import InferenceService
-from utils.validators import validate_file
+from backend.services.dataset_service import DatasetService
+from backend.services.feature_service import FeatureService
+from backend.services.history_service import HistoryService
+from backend.services.inference import InferenceService
+from backend.utils.validators import validate_file
 
 router = APIRouter()
 

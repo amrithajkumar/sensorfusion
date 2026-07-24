@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
-from logs.logger import logger
+from backend.logs.logger import logger
 
 
 def register_exception_handlers(app: FastAPI):

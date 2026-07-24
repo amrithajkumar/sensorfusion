@@ -1,7 +1,7 @@
 from pathlib import Path
 
-from logs.logger import logger
-from services.feature_service import FeatureService
+from backend.logs.logger import logger
+from backend.services.feature_service import FeatureService
 
 
 class InferenceService:

@@ -52,6 +52,7 @@ class RadarModel:
             self.model_directory /
             "radar_random_forest.pkl"
         )
+        self.model = None
             # ==========================================================
     # Load Features
     # ==========================================================
@@ -239,7 +240,7 @@ class RadarModel:
             "confusion_matrix": cm
 
         }
-        # ==========================================================
+    # ==========================================================
     # Save Model
     # ==========================================================
 
@@ -248,18 +249,56 @@ class RadarModel:
         print("\nSaving trained model...")
 
         joblib.dump(
-
             model,
-
             self.model_path
-
         )
 
-        print(f"Model saved successfully!")
+        self.model = model
 
+        print("Model saved successfully!")
         print(f"Location: {self.model_path}")
 
         return self.model_path
+        # ==========================================================
+    # Load Model
+    # ==========================================================
+
+    def load_model(self):
+
+        print("\nLoading trained radar model...")
+
+        self.model = joblib.load(self.model_path)
+
+        print("Radar Model Loaded Successfully")
+        print(f"Location: {self.model_path}")
+
+
+    # ==========================================================
+    # Predict
+    # ==========================================================
+
+    def predict(self, features):
+
+        features = np.asarray(features, dtype=np.float32)
+
+        if features.ndim == 1:
+            features = features.reshape(1, -1)
+
+        return self.model.predict(features)[0]
+
+
+    # ==========================================================
+    # Predict Probability
+    # ==========================================================
+
+    def predict_proba(self, features):
+
+        features = np.asarray(features, dtype=np.float32)
+
+        if features.ndim == 1:
+            features = features.reshape(1, -1)
+
+        return self.model.predict_proba(features)[0][1]
         # ==========================================================
     # Complete Pipeline
     # ==========================================================

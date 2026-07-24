@@ -2,7 +2,7 @@ import json
 from datetime import datetime
 from pathlib import Path
 
-from logs.logger import logger
+from backend.logs.logger import logger
 
 
 class HistoryService:
