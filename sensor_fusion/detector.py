@@ -23,13 +23,14 @@ from models.radar_model import RadarModel
 from models.thermal_model import ThermalModel
 
 from sensor_fusion.fusion import SensorFusion
+from backend.logs.logger import logger
 
 
 class MultiSensorDetector:
 
     def __init__(self):
 
-        print("Initializing Multi-Sensor Detector...")
+        logger.info("Initializing Multi-Sensor Detector...")
 
         # -------------------------------
         # Load Models
@@ -45,7 +46,7 @@ class MultiSensorDetector:
 
         self.fusion = SensorFusion()
 
-        print("Detector Ready.")
+        logger.info("Detector Ready.")
 
     # ==================================================
     # Radar

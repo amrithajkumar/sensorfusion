@@ -1,24 +1,15 @@
-from pathlib import Path
-
 from fastapi import APIRouter, File, UploadFile
 
 from backend.config import settings
 from backend.logs.logger import logger
-from backend.schemas.response import (
-    FeatureResponse,
-    HealthResponse,
-    PredictionResponse,
-)
+from backend.schemas.response import HealthResponse
 from backend.services.dataset_service import DatasetService
-from backend.services.feature_service import FeatureService
 from backend.services.history_service import HistoryService
 from backend.services.inference import InferenceService
-from backend.utils.validators import validate_file
 
 router = APIRouter()
 
 dataset_service = DatasetService()
-feature_service = FeatureService()
 inference_service = InferenceService()
 history_service = HistoryService()
 
@@ -48,85 +39,60 @@ def dataset_summary():
     return dataset_service.get_dataset_summary()
 
 
-@router.get("/predict", response_model=PredictionResponse)
-def predict():
-
-    logger.info("Prediction endpoint accessed")
-
-    result = inference_service.predict(
-        sensor_type="thermal",
-        file_path=Path("dummy")
-    )
-
-    return PredictionResponse(
-        prediction=result["prediction"],
-        confidence=result["confidence"],
-        detected=result["detected"]
-    )
-
-
-@router.get("/features/{sensor}", response_model=FeatureResponse)
-def get_features(sensor: str):
-
-    logger.info(
-        f"Feature extraction requested | Sensor={sensor}"
-    )
-
-    result = feature_service.extract_features(
-        sensor,
-        Path("dummy")
-    )
-
-    return FeatureResponse(**result)
-
-
-@router.post("/upload")
-async def upload_file(
-    sensor: str,
-    file: UploadFile = File(...)
+@router.post("/predict")
+async def predict(
+    radar_file: UploadFile = File(...),
+    thermal_file: UploadFile = File(...),
+    acoustic_file: UploadFile = File(...),
 ):
 
-    logger.info(
-        f"Upload received | Sensor={sensor} | File={file.filename}"
-    )
-
-    validate_file(
-        sensor,
-        file.filename
-    )
+    logger.info("Multi-sensor prediction request received")
 
     settings.UPLOAD_DIR.mkdir(
         parents=True,
         exist_ok=True
     )
 
-    file_path = settings.UPLOAD_DIR / file.filename
+    # -----------------------------------------
+    # Save uploaded files
+    # -----------------------------------------
 
-    with open(file_path, "wb") as buffer:
-        buffer.write(await file.read())
+    radar_path = settings.UPLOAD_DIR / radar_file.filename
+    thermal_path = settings.UPLOAD_DIR / thermal_file.filename
+    acoustic_path = settings.UPLOAD_DIR / acoustic_file.filename
 
-    logger.info(
-        f"File saved at {file_path}"
-    )
+    with open(radar_path, "wb") as buffer:
+        buffer.write(await radar_file.read())
+
+    with open(thermal_path, "wb") as buffer:
+        buffer.write(await thermal_file.read())
+
+    with open(acoustic_path, "wb") as buffer:
+        buffer.write(await acoustic_file.read())
+
+    logger.info("All sensor files uploaded successfully")
+
+    # -----------------------------------------
+    # Run AI Pipeline
+    # -----------------------------------------
 
     prediction = inference_service.predict(
-        sensor,
-        file_path
+        radar_path,
+        thermal_path,
+        acoustic_path,
     )
+
+    # -----------------------------------------
+    # Save Prediction History
+    # -----------------------------------------
 
     history_service.save_prediction(
-        filename=file.filename,
-        sensor=sensor,
+        filename=f"{radar_file.filename}, {thermal_file.filename}, {acoustic_file.filename}",
+        sensor="Multi-Sensor",
         prediction=prediction["prediction"],
-        confidence=prediction["confidence"]
+        confidence=prediction["confidence"],
     )
 
-    logger.info(
-        "Prediction completed successfully"
-    )
+    logger.info("Prediction completed successfully")
 
-    return {
-        "filename": file.filename,
-        "status": "uploaded",
-        "result": prediction
-    }
+    return prediction

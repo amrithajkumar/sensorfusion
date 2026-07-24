@@ -41,15 +41,10 @@ class SensorFusion:
     # ------------------------------------------------------
 
     def fuse(
-
         self,
-
         radar_probability,
-
         acoustic_probability,
-
         thermal_features,
-
     ):
 
         thermal_probability = self.thermal_score(
@@ -66,27 +61,33 @@ class SensorFusion:
 
         )
 
-        prediction = int(fusion_score >= 0.50)
+        detected = fusion_score >= 0.50
 
         return {
 
-            "prediction": prediction,
+            "prediction": "Drone" if detected else "No Drone",
 
-            "fusion_score": round(float(fusion_score), 4),
+            "confidence": round(float(fusion_score), 4),
 
-            "radar_probability": round(float(radar_probability), 4),
+            "detected": detected,
 
-            "thermal_probability": round(float(thermal_probability), 4),
+            "details": {
 
-            "acoustic_probability": round(float(acoustic_probability), 4),
+                "radar_probability": round(float(radar_probability), 4),
 
-            "weights": {
+                "thermal_probability": round(float(thermal_probability), 4),
 
-                "radar": self.rw,
+                "acoustic_probability": round(float(acoustic_probability), 4),
 
-                "thermal": self.tw,
+                "weights": {
 
-                "acoustic": self.aw
+                    "radar": self.rw,
+
+                    "thermal": self.tw,
+
+                    "acoustic": self.aw
+
+                }
 
             }
 
