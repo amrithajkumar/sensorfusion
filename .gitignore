@@ -265,3 +265,24 @@ results/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Virtual Environment
+.venv/
+
+# Python Cache
+__pycache__/
+*.pyc
+
+# Datasets
+datasets/
+
+# Trained Models
+results/models/
+*.pkl
+
+# VS Code
+.vscode/
+
+# OS Files
+.DS_Store
+Thumbs.db
