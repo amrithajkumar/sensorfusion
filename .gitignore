@@ -286,3 +286,23 @@ results/models/
 # OS Files
 .DS_Store
 Thumbs.db
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# Datasets
+datasets/**/raw/
+datasets/**/processed/
+datasets/**/features/
+datasets/**/sequence_features/
+
+# Trained Models
+results/models/*.pkl
+
+# Evaluation Images
+results/*.png
+results/*.txt
+
+# VS Code
+.vscode/

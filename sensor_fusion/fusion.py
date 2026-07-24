@@ -5,101 +5,88 @@ class SensorFusion:
 
     def __init__(
         self,
-        acoustic_weight=0.4,
-        thermal_weight=0.3,
-        radar_weight=0.3,
+        radar_weight=0.33,
+        thermal_weight=0.33,
+        acoustic_weight=0.34,
     ):
 
-        total = acoustic_weight + thermal_weight + radar_weight
+        total = radar_weight + thermal_weight + acoustic_weight
 
-        self.aw = acoustic_weight / total
-        self.tw = thermal_weight / total
         self.rw = radar_weight / total
+        self.tw = thermal_weight / total
+        self.aw = acoustic_weight / total
 
-    # --------------------------------------------------------
+    # ------------------------------------------------------
 
-    def normalize(self, value):
+    def normalize(self, features):
 
-        value = np.asarray(value, dtype=float)
+        features = np.asarray(features, dtype=np.float32)
 
-        minimum = value.min()
-        maximum = value.max()
+        minimum = features.min()
+        maximum = features.max()
 
         if maximum == minimum:
-            return np.zeros_like(value)
+            return np.zeros_like(features)
 
-        return (value - minimum) / (maximum - minimum)
+        return (features - minimum) / (maximum - minimum)
 
-    # --------------------------------------------------------
+    # ------------------------------------------------------
 
     def thermal_score(self, thermal_features):
 
         thermal_features = self.normalize(thermal_features)
 
-        return np.mean(thermal_features)
+        return float(np.mean(thermal_features))
 
-    # --------------------------------------------------------
-
-    def radar_score(self, radar_features):
-
-        radar_features = self.normalize(radar_features)
-
-        return np.mean(radar_features)
-
-    # --------------------------------------------------------
+    # ------------------------------------------------------
 
     def fuse(
+
         self,
+
+        radar_probability,
+
         acoustic_probability,
+
         thermal_features,
-        radar_features,
+
     ):
 
-        acoustic_score = float(acoustic_probability)
-
-        thermal_score = self.thermal_score(
+        thermal_probability = self.thermal_score(
             thermal_features
-        )
-
-        radar_score = self.radar_score(
-            radar_features
         )
 
         fusion_score = (
 
-            self.aw * acoustic_score
+            self.rw * radar_probability +
 
-            +
+            self.tw * thermal_probability +
 
-            self.tw * thermal_score
-
-            +
-
-            self.rw * radar_score
+            self.aw * acoustic_probability
 
         )
 
-        prediction = 1 if fusion_score >= 0.5 else 0
+        prediction = int(fusion_score >= 0.50)
 
         return {
 
             "prediction": prediction,
 
-            "fusion_score": fusion_score,
+            "fusion_score": round(float(fusion_score), 4),
 
-            "acoustic_score": acoustic_score,
+            "radar_probability": round(float(radar_probability), 4),
 
-            "thermal_score": thermal_score,
+            "thermal_probability": round(float(thermal_probability), 4),
 
-            "radar_score": radar_score,
+            "acoustic_probability": round(float(acoustic_probability), 4),
 
             "weights": {
 
-                "acoustic": self.aw,
+                "radar": self.rw,
 
                 "thermal": self.tw,
 
-                "radar": self.rw
+                "acoustic": self.aw
 
             }
 
