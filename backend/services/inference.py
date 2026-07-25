@@ -11,7 +11,6 @@ class InferenceService:
     def __init__(self):
 
         self.feature_service = FeatureService()
-
         self.detector = MultiSensorDetector()
 
     def predict(

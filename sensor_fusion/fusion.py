@@ -61,34 +61,34 @@ class SensorFusion:
 
         )
 
-        detected = fusion_score >= 0.50
+        detected = bool(fusion_score >= 0.50)
 
         return {
 
-            "prediction": "Drone" if detected else "No Drone",
+    "prediction": "Drone" if detected else "No Drone",
 
-            "confidence": round(float(fusion_score), 4),
+    "confidence": round(float(fusion_score), 4),
 
-            "detected": detected,
+    "detected": detected,
 
-            "details": {
+    "details": {
 
-                "radar_probability": round(float(radar_probability), 4),
+        "radar_probability": round(float(radar_probability), 4),
 
-                "thermal_probability": round(float(thermal_probability), 4),
+        "thermal_probability": round(float(thermal_probability), 4),
 
-                "acoustic_probability": round(float(acoustic_probability), 4),
+        "acoustic_probability": round(float(acoustic_probability), 4),
 
-                "weights": {
+        "weights": {
 
-                    "radar": self.rw,
+            "radar": float(self.rw),
 
-                    "thermal": self.tw,
+            "thermal": float(self.tw),
 
-                    "acoustic": self.aw
-
-                }
-
-            }
+            "acoustic": float(self.aw)
 
         }
+
+    }
+
+}
