@@ -1,1 +1,58 @@
-[]
+[
+    {
+        "timestamp": "2026-07-27T09:46:46.501866",
+        "filename": "sample_003.npy, thermal1.png, B_S2_D1_076-bebop_000_.wav",
+        "sensor": "Adaptive Multi-Sensor",
+        "prediction": "Drone",
+        "confidence": 0.6385
+    },
+    {
+        "timestamp": "2026-07-27T09:46:47.721773",
+        "filename": "sample_003.npy, thermal1.png, B_S2_D1_076-bebop_000_.wav",
+        "sensor": "Adaptive Multi-Sensor",
+        "prediction": "Drone",
+        "confidence": 0.6385
+    },
+    {
+        "timestamp": "2026-07-27T09:46:48.456698",
+        "filename": "sample_003.npy, thermal1.png, B_S2_D1_076-bebop_000_.wav",
+        "sensor": "Adaptive Multi-Sensor",
+        "prediction": "Drone",
+        "confidence": 0.6385
+    },
+    {
+        "timestamp": "2026-07-27T09:46:49.143423",
+        "filename": "sample_003.npy, thermal1.png, B_S2_D1_076-bebop_000_.wav",
+        "sensor": "Adaptive Multi-Sensor",
+        "prediction": "Drone",
+        "confidence": 0.6385
+    },
+    {
+        "timestamp": "2026-07-27T09:46:49.788601",
+        "filename": "sample_003.npy, thermal1.png, B_S2_D1_076-bebop_000_.wav",
+        "sensor": "Adaptive Multi-Sensor",
+        "prediction": "Drone",
+        "confidence": 0.6385
+    },
+    {
+        "timestamp": "2026-07-27T09:46:50.455700",
+        "filename": "sample_003.npy, thermal1.png, B_S2_D1_076-bebop_000_.wav",
+        "sensor": "Adaptive Multi-Sensor",
+        "prediction": "Drone",
+        "confidence": 0.6385
+    },
+    {
+        "timestamp": "2026-07-27T09:46:51.127320",
+        "filename": "sample_003.npy, thermal1.png, B_S2_D1_076-bebop_000_.wav",
+        "sensor": "Adaptive Multi-Sensor",
+        "prediction": "Drone",
+        "confidence": 0.6385
+    },
+    {
+        "timestamp": "2026-07-27T09:46:51.812739",
+        "filename": "sample_003.npy, thermal1.png, B_S2_D1_076-bebop_000_.wav",
+        "sensor": "Adaptive Multi-Sensor",
+        "prediction": "Drone",
+        "confidence": 0.6385
+    }
+]
