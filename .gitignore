@@ -276,9 +276,6 @@ __pycache__/
 # Datasets
 datasets/
 
-# Trained Models
-results/models/
-*.pkl
 
 # VS Code
 .vscode/
@@ -297,12 +294,7 @@ datasets/**/processed/
 datasets/**/features/
 datasets/**/sequence_features/
 
-# Trained Models
-results/models/*.pkl
 
-# Evaluation Images
-results/*.png
-results/*.txt
 
 # VS Code
 .vscode/
