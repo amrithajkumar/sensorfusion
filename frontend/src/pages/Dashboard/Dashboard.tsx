@@ -4,7 +4,7 @@ import UploadSection from "../../components/UploadSection/UploadSection";
 
 function Dashboard() {
 
-  // ✅ Put the state variables here
+  
   const [radarFile, setRadarFile] = useState<File | null>(null);
   const [thermalFile, setThermalFile] = useState<File | null>(null);
   const [acousticFile, setAcousticFile] = useState<File | null>(null);

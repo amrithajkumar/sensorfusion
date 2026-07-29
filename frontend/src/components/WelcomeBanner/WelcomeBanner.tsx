@@ -1,7 +1,7 @@
 function WelcomeBanner() {
   return (
     <section className="w-full rounded-2xl bg-white p-6 shadow-sm">
-      <p className="text-sm font-medium sm:text-base">Good Afternoon 👋</p>
+      <p className="text-sm font-medium sm:text-base">Good Afternoon !!</p>
       <h1 className="mt-2 text-2xl font-semibold leading-tight sm:text-3xl lg:text-4xl">
         Quantum Sensor Fusion Platform
       </h1>

@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import {
+  Radar,
+  Thermometer,
+  Mic,
+} from "lucide-react";
 import UploadCard from "../UploadCard/UploadCard";
 import Button from "../Button/Button";
 import SensorStatus from "../SensorStatus/SensorStatus";
@@ -60,7 +64,7 @@ function UploadSection() {
       <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-3">
         <UploadCard
           title="Radar"
-          icon="📡"
+          icon={<Radar size={48} className="text-cyan-500" />}
           acceptedFile=".csv,.npy,.npz"
           selectedFile={radarFile}
           onFileSelect={setRadarFile}
@@ -68,7 +72,7 @@ function UploadSection() {
 
         <UploadCard
           title="Thermal"
-          icon="🌡️"
+          icon={<Thermometer size={48} className="text-orange-500" />}
           acceptedFile="image/*"
           selectedFile={thermalFile}
           onFileSelect={setThermalFile}
@@ -76,7 +80,7 @@ function UploadSection() {
 
         <UploadCard
           title="Acoustic"
-          icon="🎙️"
+          icon={<Mic size={48} className="text-purple-500" />}
           acceptedFile="audio/*"
           selectedFile={acousticFile}
           onFileSelect={setAcousticFile}

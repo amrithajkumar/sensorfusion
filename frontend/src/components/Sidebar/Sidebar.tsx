@@ -1,4 +1,5 @@
 import { NavLink } from "react-router-dom";
+import { Atom } from "lucide-react";
 import {
   FiHome,
   FiTarget,
@@ -19,15 +20,18 @@ const menuItems = [
 
 function Sidebar() {
   return (
-    <aside className="w-64 h-screen bg-slate-900 text-white flex flex-col justify-between">
+    <aside className="fixed left-0 top-0 w-64 h-screen bg-slate-900 text-white flex flex-col justify-between shadow-xl z-50">
 
       <div>
 
         <div className="px-6 py-8 border-b border-slate-700">
 
-          <h1 className="text-2xl font-bold">
-            ⚛ Quantum Fusion
-          </h1>
+          
+
+<h1 className="flex items-center gap-2 text-2xl font-bold">
+  <Atom size={28} className="text-cyan-400" />
+  Quantum Fusion
+</h1>
 
           <p className="text-slate-400 text-sm mt-2">
             AI Multi-Sensor Intelligence
@@ -35,7 +39,7 @@ function Sidebar() {
 
         </div>
 
-        <nav className="mt-8">
+        <nav className="mt-6">
 
           {menuItems.map((item) => (
 
@@ -43,17 +47,21 @@ function Sidebar() {
               key={item.name}
               to={item.path}
               className={({ isActive }) =>
-                `flex items-center gap-3 px-6 py-4 transition-all duration-200 ${
+                `flex items-center gap-4 px-6 py-4 transition-all duration-200 ${
                   isActive
-                    ? "bg-cyan-600 text-white"
+                    ? "bg-cyan-600 text-white border-r-4 border-cyan-300"
                     : "text-slate-300 hover:bg-slate-800 hover:text-white"
                 }`
               }
             >
 
-              <span className="text-xl">{item.icon}</span>
+              <span className="text-xl">
+                {item.icon}
+              </span>
 
-              <span>{item.name}</span>
+              <span className="font-medium">
+                {item.name}
+              </span>
 
             </NavLink>
 
@@ -67,9 +75,9 @@ function Sidebar() {
 
         <div className="flex items-center gap-3">
 
-          <div className="w-3 h-3 rounded-full bg-green-500"></div>
+          <div className="w-3 h-3 rounded-full bg-green-500 animate-pulse"></div>
 
-          <span className="text-sm">
+          <span className="text-sm font-medium">
             Backend Connected
           </span>
 
