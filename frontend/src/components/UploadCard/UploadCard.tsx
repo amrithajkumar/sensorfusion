@@ -1,4 +1,5 @@
 import { type ChangeEvent, type ReactNode, useRef } from "react";
+import { CircleCheck, FileUp } from "lucide-react";
 
 type UploadCardProps = {
   title: string;
@@ -37,25 +38,50 @@ function UploadCard({
       <button
         type="button"
         onClick={handleCardClick}
-        className="flex h-[220px] w-full flex-col items-center justify-center rounded-xl border border-gray-200 bg-white p-6 text-center shadow-sm transition-all duration-200 hover:border-blue-500 hover:shadow-md"
+        aria-label={`Upload ${title} file`}
+        className="group flex h-full min-h-[240px] w-full flex-col justify-between rounded-2xl border border-slate-800 bg-slate-900 p-6 text-left transition-all duration-200 hover:border-cyan-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500/40"
       >
-        <span className="text-5xl">{icon}</span>
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-slate-800 bg-slate-950 text-cyan-400">
+            <span className="text-3xl">{icon}</span>
+          </div>
 
-        <h3 className="mt-4 text-xl font-semibold text-gray-800">
-          {title}
-        </h3>
+          <span className="rounded-full border border-slate-800 px-3 py-1 text-xs font-medium uppercase tracking-[0.2em] text-slate-400 transition group-hover:border-cyan-500/40 group-hover:text-cyan-300">
+            {acceptedFile}
+          </span>
+        </div>
 
-        {selectedFile ? (
-          <div className="mt-4 rounded-lg bg-green-50 px-4 py-2">
-            <p className="text-sm font-medium text-green-700">
-              ✓ {selectedFile.name}
+        <div className="space-y-3">
+          <div>
+            <h3 className="text-lg font-semibold text-white">{title}</h3>
+
+            <p className="mt-1 text-sm leading-6 text-slate-400">
+              Select a {title.toLowerCase()} capture to include in the fusion run.
             </p>
           </div>
-        ) : (
-          <p className="mt-4 text-sm text-gray-500">
-            Click to upload or drag & drop
-          </p>
-        )}
+
+          {selectedFile ? (
+            <div className="flex items-center gap-3 rounded-xl border border-green-500/20 bg-green-500/10 px-4 py-3">
+              <CircleCheck className="h-5 w-5 shrink-0 text-green-400" />
+
+              <div className="min-w-0">
+                <p className="text-xs font-medium uppercase tracking-[0.2em] text-green-300">
+                  File selected
+                </p>
+
+                <p className="truncate text-sm font-medium text-white">
+                  {selectedFile.name}
+                </p>
+              </div>
+            </div>
+          ) : (
+            <div className="flex items-center gap-3 rounded-xl border border-dashed border-slate-700 bg-slate-950/40 px-4 py-3 text-slate-400 transition group-hover:border-cyan-500/50 group-hover:text-slate-300">
+              <FileUp className="h-5 w-5 shrink-0" />
+
+              <p className="text-sm">Click to upload or drag and drop</p>
+            </div>
+          )}
+        </div>
       </button>
 
       <input

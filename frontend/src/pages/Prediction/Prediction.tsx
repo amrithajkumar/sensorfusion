@@ -1,3 +1,4 @@
+import { useLocation } from "react-router-dom";
 import {
   Target,
   Activity,
@@ -7,299 +8,260 @@ import {
   CircleCheck,
   CircleX,
   Cpu,
+  Layers3,
+  Gauge,
 } from "lucide-react";
+import Card from "../../components/common/Card";
+import SectionHeader from "../../components/common/SectionHeader";
+import StatusBadge from "../../components/common/StatusBadge";
+
+type PredictionDetails = {
+  radar_probability?: number;
+  thermal_probability?: number;
+  acoustic_probability?: number;
+  weights?: {
+    radar?: number;
+    thermal?: number;
+    acoustic?: number;
+  };
+};
+
+type PredictionState = {
+  prediction?: string;
+  confidence?: number;
+  detected?: boolean;
+  details?: PredictionDetails;
+};
+
+type SensorConfig = {
+  key: "radar" | "thermal" | "acoustic";
+  label: string;
+  icon: typeof Radar;
+  color: string;
+  probability: number;
+  weight: number;
+};
+
+const formatPercent = (value?: number) => {
+  if (typeof value !== "number" || Number.isNaN(value)) {
+    return 0;
+  }
+
+  return value <= 1 ? value * 100 : value;
+};
+
+const formatNumber = (value?: number) => {
+  if (typeof value !== "number" || Number.isNaN(value)) {
+    return 0;
+  }
+
+  return value;
+};
 
 function Prediction() {
+  const location = useLocation();
+  const prediction = (location.state ?? {}) as PredictionState;
+  const details = prediction.details ?? {};
+
+  const resultLabel = prediction.prediction ?? "No prediction data";
+  const isDetected =
+    typeof prediction.detected === "boolean"
+      ? prediction.detected
+      : resultLabel === "Drone";
+
+  const confidenceValue = formatPercent(prediction.confidence);
+
+  const sensors: SensorConfig[] = [
+    {
+      key: "radar",
+      label: "Radar",
+      icon: Radar,
+      color: "text-cyan-400",
+      probability: formatPercent(details.radar_probability),
+      weight: formatNumber(details.weights?.radar),
+    },
+    {
+      key: "thermal",
+      label: "Thermal",
+      icon: Thermometer,
+      color: "text-orange-400",
+      probability: formatPercent(details.thermal_probability),
+      weight: formatNumber(details.weights?.thermal),
+    },
+    {
+      key: "acoustic",
+      label: "Acoustic",
+      icon: Mic,
+      color: "text-violet-400",
+      probability: formatPercent(details.acoustic_probability),
+      weight: formatNumber(details.weights?.acoustic),
+    },
+  ];
+
   return (
     <div className="space-y-8">
+      <SectionHeader
+        title="Prediction result"
+        description="This page reads the prediction returned through navigate('/prediction', { state: prediction }) and renders it without changing the existing flow."
+      />
 
-      {/* Page Header */}
-      <div>
-        <h1 className="text-4xl font-bold text-slate-900">
-          Adaptive Detection Result
-        </h1>
+      <div className="grid gap-6 xl:grid-cols-3">
+        <Card className="space-y-6 xl:col-span-2">
+          <div className="flex items-center gap-3">
+            <Target className="h-6 w-6 text-cyan-400" />
+            <h2 className="text-xl font-semibold text-white">Prediction result</h2>
+          </div>
 
-        <p className="mt-2 text-slate-500">
-          Multi-sensor fusion prediction using Quantum Optimized Detection.
-        </p>
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="rounded-2xl border border-slate-800 bg-slate-950/40 p-5">
+              <p className="text-xs font-medium uppercase tracking-[0.2em] text-slate-500">
+                Prediction
+              </p>
+
+              <div className="mt-4 flex items-center gap-3">
+                {isDetected ? (
+                  <CircleCheck className="h-7 w-7 text-green-400" />
+                ) : (
+                  <CircleX className="h-7 w-7 text-red-400" />
+                )}
+
+                <div>
+                  <p className="text-3xl font-semibold text-white">{resultLabel}</p>
+                  <p className="mt-1 text-sm text-slate-400">
+                    {isDetected ? "Detection threshold met" : "Detection threshold not met"}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-slate-800 bg-slate-950/40 p-5">
+              <p className="text-xs font-medium uppercase tracking-[0.2em] text-slate-500">
+                Confidence
+              </p>
+
+              <div className="mt-4 flex items-center gap-3">
+                <Activity className="h-7 w-7 text-cyan-400" />
+
+                <div>
+                  <p className="text-3xl font-semibold text-white">
+                    {confidenceValue.toFixed(1)}%
+                  </p>
+                  <p className="mt-1 text-sm text-slate-400">
+                    Backend confidence value
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Card>
+
+        <Card className="space-y-5">
+          <div className="flex items-center gap-3">
+            <Layers3 className="h-6 w-6 text-cyan-400" />
+            <h2 className="text-xl font-semibold text-white">Sensor availability</h2>
+          </div>
+
+          <div className="space-y-4">
+            {sensors.map((sensor) => {
+              const Icon = sensor.icon;
+              const available = sensor.probability > 0;
+
+              return (
+                <div key={sensor.key} className="rounded-2xl border border-slate-800 bg-slate-950/40 p-4">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex items-center gap-3">
+                      <Icon className={`h-5 w-5 ${sensor.color}`} />
+
+                      <div>
+                        <p className="font-medium text-white">{sensor.label}</p>
+                        <p className="text-sm text-slate-400">Reported by backend</p>
+                      </div>
+                    </div>
+
+                    {available ? (
+                      <StatusBadge status="success" text="Included" />
+                    ) : (
+                      <StatusBadge status="error" text="Missing" />
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </Card>
       </div>
 
-      {/* Prediction Summary */}
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-
-        <h2 className="flex items-center gap-3 text-xl font-semibold text-slate-800">
-          <Target size={24} className="text-cyan-600" />
-          Target Prediction
-        </h2>
-
-        <div className="mt-6 grid grid-cols-2 gap-8">
-
-          <div>
-
-            <p className="text-sm text-slate-500">
-              Prediction
-            </p>
-
-            <div className="mt-3 flex items-center gap-3">
-
-              <CircleCheck
-                size={26}
-                className="text-green-500"
-              />
-
-              <h3 className="text-3xl font-bold text-green-600">
-                Drone Detected
-              </h3>
-
-            </div>
-
+      <div className="grid gap-6 xl:grid-cols-3">
+        <Card className="space-y-5 xl:col-span-2">
+          <div className="flex items-center gap-3">
+            <Gauge className="h-6 w-6 text-cyan-400" />
+            <h2 className="text-xl font-semibold text-white">Sensor contribution</h2>
           </div>
 
-          <div>
+          <div className="space-y-5">
+            {sensors.map((sensor) => (
+              <div key={sensor.key} className="space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-slate-300">{sensor.label}</span>
+                  <span className="font-medium text-white">
+                    {sensor.probability.toFixed(1)}%
+                  </span>
+                </div>
 
-            <p className="text-sm text-slate-500">
-              Confidence
-            </p>
+                <div className="h-2 rounded-full bg-slate-800">
+                  <div
+                    className={`h-2 rounded-full ${
+                      sensor.key === "radar"
+                        ? "bg-cyan-400"
+                        : sensor.key === "thermal"
+                          ? "bg-orange-400"
+                          : "bg-violet-400"
+                    }`}
+                    style={{
+                      width: `${Math.max(0, Math.min(100, sensor.probability))}%`,
+                    }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
 
-            <div className="mt-3 flex items-center gap-3">
-
-              <Activity
-                size={24}
-                className="text-blue-500"
-              />
-
-              <h3 className="text-3xl font-bold text-slate-800">
-                96.2%
-              </h3>
-
-            </div>
-
+        <Card className="space-y-5">
+          <div className="flex items-center gap-3">
+            <Cpu className="h-6 w-6 text-cyan-400" />
+            <h2 className="text-xl font-semibold text-white">Quantum optimization</h2>
           </div>
 
-        </div>
+          <div className="space-y-4 text-sm">
+            <div className="rounded-2xl border border-slate-800 bg-slate-950/40 p-4">
+              <p className="text-xs font-medium uppercase tracking-[0.2em] text-slate-500">
+                Optimizer
+              </p>
+              <p className="mt-2 font-medium text-white">
+                BQPhy Quantum-Inspired Optimization
+              </p>
+            </div>
 
+            <div className="rounded-2xl border border-slate-800 bg-slate-950/40 p-4">
+              <p className="text-xs font-medium uppercase tracking-[0.2em] text-slate-500">
+                Fusion strategy
+              </p>
+              <p className="mt-2 font-medium text-white">Adaptive Weighted Fusion</p>
+            </div>
+
+            <div className="rounded-2xl border border-slate-800 bg-slate-950/40 p-4">
+              <p className="text-xs font-medium uppercase tracking-[0.2em] text-slate-500">
+                Optimization status
+              </p>
+              <div className="mt-2 flex items-center gap-2">
+                <CircleCheck className="h-4 w-4 text-green-400" />
+                <span className="font-medium text-green-300">Completed</span>
+              </div>
+            </div>
+          </div>
+        </Card>
       </div>
-
-      {/* Sensors Used */}
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-
-        <h2 className="text-xl font-semibold text-slate-800">
-          Sensors Used
-        </h2>
-
-        <div className="mt-6 space-y-4">
-
-          <div className="flex items-center justify-between rounded-xl border border-slate-100 p-4">
-
-            <div className="flex items-center gap-3">
-
-              <Radar
-                size={22}
-                className="text-cyan-500"
-              />
-
-              <span className="font-medium">
-                Radar
-              </span>
-
-            </div>
-
-            <div className="flex items-center gap-2">
-
-              <CircleCheck
-                size={18}
-                className="text-green-500"
-              />
-
-              <span className="font-medium text-green-600">
-                Available
-              </span>
-
-            </div>
-
-          </div>
-
-          <div className="flex items-center justify-between rounded-xl border border-slate-100 p-4">
-
-            <div className="flex items-center gap-3">
-
-              <Thermometer
-                size={22}
-                className="text-orange-500"
-              />
-
-              <span className="font-medium">
-                Thermal
-              </span>
-
-            </div>
-
-            <div className="flex items-center gap-2">
-
-              <CircleCheck
-                size={18}
-                className="text-green-500"
-              />
-
-              <span className="font-medium text-green-600">
-                Available
-              </span>
-
-            </div>
-
-          </div>
-
-          <div className="flex items-center justify-between rounded-xl border border-slate-100 p-4">
-
-            <div className="flex items-center gap-3">
-
-              <Mic
-                size={22}
-                className="text-purple-500"
-              />
-
-              <span className="font-medium">
-                Acoustic
-              </span>
-
-            </div>
-
-            <div className="flex items-center gap-2">
-
-              <CircleX
-                size={18}
-                className="text-red-500"
-              />
-
-              <span className="font-medium text-red-500">
-                Missing
-              </span>
-
-            </div>
-
-          </div>
-
-        </div>
-
-      </div>
-
-      {/* Sensor Contribution */}
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-
-        <h2 className="text-xl font-semibold text-slate-800">
-          Sensor Contribution
-        </h2>
-
-        <div className="mt-6 space-y-4">
-
-          <div className="flex justify-between">
-            <span>Radar</span>
-            <span className="font-semibold">61%</span>
-          </div>
-
-          <div className="h-2 rounded-full bg-slate-200">
-            <div className="h-2 w-[61%] rounded-full bg-cyan-500"></div>
-          </div>
-
-          <div className="flex justify-between">
-            <span>Thermal</span>
-            <span className="font-semibold">39%</span>
-          </div>
-
-          <div className="h-2 rounded-full bg-slate-200">
-            <div className="h-2 w-[39%] rounded-full bg-orange-500"></div>
-          </div>
-
-          <div className="flex justify-between">
-            <span>Acoustic</span>
-            <span className="font-semibold">0%</span>
-          </div>
-
-          <div className="h-2 rounded-full bg-slate-200">
-            <div className="h-2 w-[0%] rounded-full bg-purple-500"></div>
-          </div>
-
-        </div>
-
-      </div>
-
-      {/* Quantum Optimization */}
-      <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-
-        <h2 className="flex items-center gap-3 text-xl font-semibold text-slate-800">
-
-          <Cpu
-            size={24}
-            className="text-violet-600"
-          />
-
-          Quantum Optimization
-
-        </h2>
-
-        <div className="mt-6 grid grid-cols-2 gap-8">
-
-          <div>
-
-            <p className="text-sm text-slate-500">
-              Optimizer
-            </p>
-
-            <p className="font-medium text-slate-800">
-              QuantumNow QIEO
-            </p>
-
-          </div>
-
-          <div>
-
-            <p className="text-sm text-slate-500">
-              Fusion Strategy
-            </p>
-
-            <p className="font-medium text-slate-800">
-              Adaptive Weighted Fusion
-            </p>
-
-          </div>
-
-          <div>
-
-            <p className="text-sm text-slate-500">
-              Inference Time
-            </p>
-
-            <p className="font-medium text-slate-800">
-              0.18 sec
-            </p>
-
-          </div>
-
-          <div>
-
-            <p className="text-sm text-slate-500">
-              Optimization Status
-            </p>
-
-            <div className="mt-1 flex items-center gap-2">
-
-              <CircleCheck
-                size={18}
-                className="text-green-500"
-              />
-
-              <span className="font-medium text-green-600">
-                Completed
-              </span>
-
-            </div>
-
-          </div>
-
-        </div>
-
-      </div>
-
     </div>
   );
 }

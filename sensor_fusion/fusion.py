@@ -10,11 +10,11 @@ class SensorFusion:
         acoustic_weight=0.34,
     ):
 
-        total = radar_weight + thermal_weight + acoustic_weight
-
-        self.rw = radar_weight / total
-        self.tw = thermal_weight / total
-        self.aw = acoustic_weight / total
+        self.default_weights = {
+            "radar": radar_weight,
+            "thermal": thermal_weight,
+            "acoustic": acoustic_weight,
+        }
 
     # ------------------------------------------------------
 
@@ -42,53 +42,106 @@ class SensorFusion:
 
     def fuse(
         self,
-        radar_probability,
-        acoustic_probability,
-        thermal_features,
+        radar_probability=None,
+        acoustic_probability=None,
+        thermal_features=None,
     ):
 
-        thermal_probability = self.thermal_score(
-            thermal_features
+        available = {}
+
+        # -----------------------------
+        # Radar
+        # -----------------------------
+        if radar_probability is not None:
+            available["radar"] = float(radar_probability)
+
+        # -----------------------------
+        # Thermal
+        # -----------------------------
+        if thermal_features is not None:
+            available["thermal"] = self.thermal_score(
+                thermal_features
+            )
+
+        # -----------------------------
+        # Acoustic
+        # -----------------------------
+        if acoustic_probability is not None:
+            available["acoustic"] = float(acoustic_probability)
+
+        # -----------------------------
+        # Safety Check
+        # -----------------------------
+        if len(available) < 2:
+            raise ValueError(
+                "At least two sensors are required for fusion."
+            )
+
+        # -----------------------------
+        # Recalculate weights
+        # -----------------------------
+        total_weight = sum(
+            self.default_weights[name]
+            for name in available
         )
 
-        fusion_score = (
+        normalized_weights = {}
 
-            self.rw * radar_probability +
+        for name in available:
 
-            self.tw * thermal_probability +
+            normalized_weights[name] = (
+                self.default_weights[name] /
+                total_weight
+            )
 
-            self.aw * acoustic_probability
+        # -----------------------------
+        # Weighted Fusion
+        # -----------------------------
+        fusion_score = 0.0
 
-        )
+        for sensor in available:
 
-        detected = bool(fusion_score >= 0.50)
+            fusion_score += (
+                available[sensor] *
+                normalized_weights[sensor]
+            )
+
+        detected = fusion_score >= 0.50
 
         return {
 
-    "prediction": "Drone" if detected else "No Drone",
+            "prediction": "Drone" if detected else "No Drone",
 
-    "confidence": round(float(fusion_score), 4),
+            "confidence": round(float(fusion_score), 4),
 
-    "detected": detected,
+            "detected": bool(detected),
 
-    "details": {
+            "details": {
 
-        "radar_probability": round(float(radar_probability), 4),
+                "radar_probability": (
+                    round(available["radar"], 4)
+                    if "radar" in available
+                    else None
+                ),
 
-        "thermal_probability": round(float(thermal_probability), 4),
+                "thermal_probability": (
+                    round(available["thermal"], 4)
+                    if "thermal" in available
+                    else None
+                ),
 
-        "acoustic_probability": round(float(acoustic_probability), 4),
+                "acoustic_probability": (
+                    round(available["acoustic"], 4)
+                    if "acoustic" in available
+                    else None
+                ),
 
-        "weights": {
+                "weights": normalized_weights,
 
-            "radar": float(self.rw),
+                "active_sensors": list(
+                    available.keys()
+                )
 
-            "thermal": float(self.tw),
-
-            "acoustic": float(self.aw)
+            }
 
         }
-
-    }
-
-}

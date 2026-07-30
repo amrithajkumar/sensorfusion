@@ -1,27 +1,18 @@
-import { useState } from "react";
+import SectionHeader from "../../components/common/SectionHeader";
 import StatusCard from "../../components/StatusCard/StatusCard";
 import UploadSection from "../../components/UploadSection/UploadSection";
+import RecentActivity from "../../components/RecentActivity/RecentActivity";
 
 function Dashboard() {
-
-  
-  const [radarFile, setRadarFile] = useState<File | null>(null);
-  const [thermalFile, setThermalFile] = useState<File | null>(null);
-  const [acousticFile, setAcousticFile] = useState<File | null>(null);
-
   return (
-    <div>
+    <div className="space-y-8">
+      <SectionHeader
+        title="Dashboard"
+        description="Monitor and manage the QuantumFusion AI drone detection platform."
+      />
 
-      <h1 className="text-4xl font-bold">
-        Dashboard
-      </h1>
-
-      <p className="text-gray-500 mt-2">
-        Monitor your AI Drone Detection System.
-      </p>
-
-      <div className="grid grid-cols-3 gap-6 mt-8">
-
+      {/* System Status */}
+      <div className="grid gap-6 lg:grid-cols-4">
         <StatusCard
           title="Backend"
           value="Connected"
@@ -30,22 +21,28 @@ function Dashboard() {
 
         <StatusCard
           title="AI Models"
-          value="Ready"
+          value="3 Loaded"
           status="success"
         />
 
         <StatusCard
-          title="Last Scan"
-          value="--"
-          status="warning"
+          title="Quantum Engine"
+          value="BQPhy Ready"
+          status="success"
         />
 
+        <StatusCard
+          title="System Status"
+          value="Operational"
+          status="success"
+        />
       </div>
 
-      <div className="mt-10">
-        <UploadSection />
-      </div>
+      {/* Detection */}
+      <UploadSection />
 
+      {/* Recent Activity */}
+      <RecentActivity />
     </div>
   );
 }

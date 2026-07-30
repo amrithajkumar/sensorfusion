@@ -1,3 +1,5 @@
+import PrimaryButton from "../common/PrimaryButton";
+
 type ButtonProps = {
   title: string;
   onClick: () => void;
@@ -10,28 +12,13 @@ function Button({
   disabled = false,
 }: ButtonProps) {
   return (
-    <button
+    <PrimaryButton
       onClick={onClick}
       disabled={disabled}
-      className={`
-        w-full
-        rounded-xl
-        bg-cyan-600
-        py-4
-        text-lg
-        font-semibold
-        text-white
-        transition-all
-        duration-200
-
-        hover:bg-cyan-700
-
-        disabled:bg-gray-300
-        disabled:cursor-not-allowed
-      `}
+      className="w-full"
     >
       {title}
-    </button>
+    </PrimaryButton>
   );
 }
 

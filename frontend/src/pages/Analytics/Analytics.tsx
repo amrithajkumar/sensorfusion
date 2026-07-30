@@ -1,5 +1,12 @@
 import { useEffect, useState } from "react";
+
 import ChartCard from "../../components/ChartCard/ChartCard";
+import SectionHeader from "../../components/common/SectionHeader";
+
+import SensorPerformanceChart from "../../components/charts/SensorPerformanceChart";
+import SensorContributionChart from "../../components/charts/SensorContributionChart";
+import FusionWeightChart from "../../components/charts/FusionWeightChart";
+
 import { getHistory } from "../../services/historyService";
 
 const Analytics = () => {
@@ -44,76 +51,35 @@ const Analytics = () => {
   }, []);
 
   return (
-    <div className="p-8">
-      <h1 className="text-4xl font-bold mb-2">
-        Analytics Dashboard
-      </h1>
+  <div className="space-y-8">
+    <SectionHeader
+      title="Analytics"
+      description="Monitor sensor performance and quantum fusion insights."
+    />
 
-      <p className="text-gray-500 mb-8">
-        Live analytics generated from prediction history.
-      </p>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-
-        <ChartCard
-          title="Total Predictions"
-          value={total}
-        />
-
-        <ChartCard
-          title="Drone Detected"
-          value={droneCount}
-        />
-
-        <ChartCard
-          title="No Drone"
-          value={noDroneCount}
-        />
-
-        <ChartCard
-          title="Average Confidence"
-          value={`${averageConfidence}%`}
-        />
-
-      </div>
-
-      <div className="bg-white rounded-xl shadow-md p-8 mt-8">
-
-        <h2 className="text-2xl font-semibold mb-4">
-          Analytics Summary
-        </h2>
-
-        <ul className="space-y-3 text-gray-700">
-
-          <li>
-            ✔ Total predictions processed: {total}
-          </li>
-
-          <li>
-            ✔ Drone detections: {droneCount}
-          </li>
-
-          <li>
-            ✔ No Drone detections: {noDroneCount}
-          </li>
-
-          <li>
-            ✔ Average confidence: {averageConfidence}%
-          </li>
-
-          <li>
-            ✔ Fusion strategy: Adaptive Weighted Fusion
-          </li>
-
-          <li>
-            ✔ Quantum optimizer: QIEO
-          </li>
-
-        </ul>
-
-      </div>
+    {/* Metric Cards */}
+    <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
+      <ChartCard title="Total Predictions" value={total} />
+      <ChartCard title="Drone Detected" value={droneCount} />
+      <ChartCard title="No Drone" value={noDroneCount} />
+      <ChartCard
+        title="Average Confidence"
+        value={`${averageConfidence}%`}
+      />
     </div>
-  );
+
+    {/* Sensor Performance Trend */}
+    <SensorPerformanceChart />
+
+    {/* Bottom Charts */}
+    <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+      <SensorContributionChart />
+
+      <FusionWeightChart />
+    </div>
+  </div>
+);
+
 };
 
 export default Analytics;

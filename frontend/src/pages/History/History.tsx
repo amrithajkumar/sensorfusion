@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import HistoryTable from "../../components/HistoryTable/HistoryTable";
+import SectionHeader from "../../components/common/SectionHeader";
 import { getHistory } from "../../services/historyService";
 
 const History = () => {
@@ -28,14 +29,11 @@ const History = () => {
   }, []);
 
   return (
-    <div className="p-8">
-      <h1 className="text-4xl font-bold mb-2">
-        Prediction History
-      </h1>
-
-      <p className="text-gray-500 mb-8">
-        Previous prediction records.
-      </p>
+    <div className="space-y-8">
+      <SectionHeader
+        title="Prediction history"
+        description="Previous prediction records from the existing backend history endpoint."
+      />
 
       <HistoryTable data={history} />
     </div>

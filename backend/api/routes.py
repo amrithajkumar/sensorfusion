@@ -36,15 +36,17 @@ def dataset_summary():
 
 
 # ------------------------------
-# NEW HISTORY ENDPOINT
+# HISTORY ENDPOINT
 # ------------------------------
 @router.get("/history")
 def get_history():
     logger.info("History requested")
-
     return history_service.load_predictions()
 
 
+# ------------------------------
+# PREDICTION ENDPOINT
+# ------------------------------
 @router.post("/predict")
 async def predict(
     radar_file: Optional[UploadFile] = File(None),
@@ -54,10 +56,17 @@ async def predict(
 
     logger.info("Prediction request received")
 
-    if not any([radar_file, thermal_file, acoustic_file]):
+    # Count uploaded sensors
+    uploaded_count = sum(
+        file is not None
+        for file in [radar_file, thermal_file, acoustic_file]
+    )
+
+    # Require at least two sensors
+    if uploaded_count < 2:
         raise HTTPException(
             status_code=400,
-            detail="Upload at least one sensor file.",
+            detail="Please upload at least two sensor files.",
         )
 
     settings.UPLOAD_DIR.mkdir(
@@ -69,46 +78,62 @@ async def predict(
     thermal_path = None
     acoustic_path = None
 
+    uploaded_files = []
+    uploaded_sensors = []
+
+    # ------------------------------
+    # Save Radar
+    # ------------------------------
     if radar_file:
         radar_path = settings.UPLOAD_DIR / radar_file.filename
 
         with open(radar_path, "wb") as buffer:
             buffer.write(await radar_file.read())
 
+        uploaded_files.append(radar_file.filename)
+        uploaded_sensors.append("Radar")
+
+    # ------------------------------
+    # Save Thermal
+    # ------------------------------
     if thermal_file:
         thermal_path = settings.UPLOAD_DIR / thermal_file.filename
 
         with open(thermal_path, "wb") as buffer:
             buffer.write(await thermal_file.read())
 
+        uploaded_files.append(thermal_file.filename)
+        uploaded_sensors.append("Thermal")
+
+    # ------------------------------
+    # Save Acoustic
+    # ------------------------------
     if acoustic_file:
         acoustic_path = settings.UPLOAD_DIR / acoustic_file.filename
 
         with open(acoustic_path, "wb") as buffer:
             buffer.write(await acoustic_file.read())
 
+        uploaded_files.append(acoustic_file.filename)
+        uploaded_sensors.append("Acoustic")
+
     logger.info("Uploaded sensor files saved successfully")
 
+    # ------------------------------
+    # Run Inference
+    # ------------------------------
     prediction = inference_service.predict(
         radar_path,
         thermal_path,
         acoustic_path,
     )
 
-    uploaded_files = []
-
-    if radar_file:
-        uploaded_files.append(radar_file.filename)
-
-    if thermal_file:
-        uploaded_files.append(thermal_file.filename)
-
-    if acoustic_file:
-        uploaded_files.append(acoustic_file.filename)
-
+    # ------------------------------
+    # Save History
+    # ------------------------------
     history_service.save_prediction(
         filename=", ".join(uploaded_files),
-        sensor="Adaptive Multi-Sensor",
+        sensor=" + ".join(uploaded_sensors),
         prediction=prediction["prediction"],
         confidence=prediction["confidence"],
     )

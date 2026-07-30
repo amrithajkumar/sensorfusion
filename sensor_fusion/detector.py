@@ -2,21 +2,14 @@
 =====================================================
 Multi-Sensor Detector
 
-Main inference pipeline.
+Supports:
+- Radar only (feature extraction stage)
+- Thermal only (feature extraction stage)
+- Acoustic only (feature extraction stage)
 
-Responsible for:
-
-Radar
-Thermal
-Acoustic
-Fusion
-Quantum Interface
-
-Author : Quantum Fusion Team
+Fusion requires at least two available sensors.
 =====================================================
 """
-
-import numpy as np
 
 from models.acoustic_model import AcousticModel
 from models.radar_model import RadarModel
@@ -32,10 +25,6 @@ class MultiSensorDetector:
 
         logger.info("Initializing Multi-Sensor Detector...")
 
-        # -------------------------------
-        # Load Models
-        # -------------------------------
-
         self.radar_model = RadarModel()
         self.radar_model.load_model()
 
@@ -48,58 +37,52 @@ class MultiSensorDetector:
 
         logger.info("Detector Ready.")
 
-    # ==================================================
-    # Radar
-    # ==================================================
+    # -------------------------------------------------
 
-    def radar_probability(
-        self,
-        radar_features
-    ):
+    def radar_probability(self, radar_features):
+
+        if radar_features is None:
+            return None
 
         return self.radar_model.predict_proba(
             radar_features
         )
 
-    # ==================================================
-    # Acoustic
-    # ==================================================
+    # -------------------------------------------------
 
-    def acoustic_probability(
-        self,
-        acoustic_features
-    ):
+    def acoustic_probability(self, acoustic_features):
+
+        if acoustic_features is None:
+            return None
 
         return self.acoustic_model.predict_proba(
             acoustic_features
         )
 
-    # ==================================================
-    # Thermal
-    # ==================================================
+    # -------------------------------------------------
 
-    def thermal_features(
-        self,
-        thermal_features
-    ):
+    def thermal_probability(self, thermal_features):
+
+        if thermal_features is None:
+            return None
 
         return thermal_features
 
-    # ==================================================
-    # Detection Pipeline
-    # ==================================================
+    # -------------------------------------------------
 
     def detect(
 
         self,
 
-        radar_features,
+        radar_features=None,
 
-        thermal_features,
+        thermal_features=None,
 
-        acoustic_features,
+        acoustic_features=None,
 
     ):
+
+        logger.info("Running detector...")
 
         radar_probability = self.radar_probability(
             radar_features
@@ -109,18 +92,18 @@ class MultiSensorDetector:
             acoustic_features
         )
 
-        thermal_vector = self.thermal_features(
+        thermal_vector = self.thermal_probability(
             thermal_features
         )
 
-        result = self.fusion.fuse(
+        prediction = self.fusion.fuse(
 
-        radar_probability,
+            radar_probability=radar_probability,
 
-        acoustic_probability,
+            acoustic_probability=acoustic_probability,
 
-        thermal_vector
+            thermal_features=thermal_vector,
 
-    )
+        )
 
-        return result
+        return prediction

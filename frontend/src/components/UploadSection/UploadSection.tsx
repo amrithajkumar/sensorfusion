@@ -5,6 +5,8 @@ import {
   Thermometer,
   Mic,
 } from "lucide-react";
+import Card from "../common/Card";
+import SectionHeader from "../common/SectionHeader";
 import UploadCard from "../UploadCard/UploadCard";
 import Button from "../Button/Button";
 import SensorStatus from "../SensorStatus/SensorStatus";
@@ -52,55 +54,58 @@ function UploadSection() {
   };
 
   return (
-    <section className="w-full">
-      <h2 className="text-3xl font-bold text-gray-900">
-        Upload Sensor Files
-      </h2>
+    <section className="space-y-6">
+      <SectionHeader
+        title="Upload sensor files"
+        description="Select one or more sensor captures to run the existing multi-sensor prediction pipeline."
+      />
 
-      <p className="mt-2 text-gray-500">
-        Upload one or more sensor files to perform adaptive multi-sensor drone detection.
-      </p>
+      <Card className="space-y-6">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+          <UploadCard
+            title="Radar"
+            icon={<Radar size={28} className="text-cyan-400" />}
+            acceptedFile=".csv,.npy,.npz"
+            selectedFile={radarFile}
+            onFileSelect={setRadarFile}
+          />
 
-      <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <UploadCard
-          title="Radar"
-          icon={<Radar size={48} className="text-cyan-500" />}
-          acceptedFile=".csv,.npy,.npz"
-          selectedFile={radarFile}
-          onFileSelect={setRadarFile}
-        />
+          <UploadCard
+            title="Thermal"
+            icon={<Thermometer size={28} className="text-orange-400" />}
+            acceptedFile="image/*"
+            selectedFile={thermalFile}
+            onFileSelect={setThermalFile}
+          />
 
-        <UploadCard
-          title="Thermal"
-          icon={<Thermometer size={48} className="text-orange-500" />}
-          acceptedFile="image/*"
-          selectedFile={thermalFile}
-          onFileSelect={setThermalFile}
-        />
+          <UploadCard
+            title="Acoustic"
+            icon={<Mic size={28} className="text-violet-400" />}
+            acceptedFile="audio/*"
+            selectedFile={acousticFile}
+            onFileSelect={setAcousticFile}
+          />
+        </div>
 
-        <UploadCard
-          title="Acoustic"
-          icon={<Mic size={48} className="text-purple-500" />}
-          acceptedFile="audio/*"
-          selectedFile={acousticFile}
-          onFileSelect={setAcousticFile}
-        />
-      </div>
-
-      <div className="mt-8">
         <SensorStatus
           radarFile={radarFile}
           thermalFile={thermalFile}
           acousticFile={acousticFile}
         />
-      </div>
 
-      <div className="mt-8">
-        <Button
-          title="Run Adaptive Detection"
-          onClick={handleRunDetection}
-        />
-      </div>
+        <div className="flex flex-col gap-3 border-t border-slate-800 pt-6 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm text-slate-400">
+            The prediction flow, API call, and routing behavior remain unchanged.
+          </p>
+
+          <div className="sm:w-auto">
+            <Button
+              title="Run Adaptive Detection"
+              onClick={handleRunDetection}
+            />
+          </div>
+        </div>
+      </Card>
     </section>
   );
 }

@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Optional
 
 from backend.logs.logger import logger
 from backend.services.feature_service import FeatureService
@@ -15,9 +16,9 @@ class InferenceService:
 
     def predict(
         self,
-        radar_file: Path,
-        thermal_file: Path,
-        acoustic_file: Path,
+        radar_file: Optional[Path],
+        thermal_file: Optional[Path],
+        acoustic_file: Optional[Path],
     ):
 
         try:
@@ -28,17 +29,27 @@ class InferenceService:
             # Feature Extraction
             # ---------------------------------------
 
-            radar_features = self.feature_service.extract_radar(
-                radar_file
-            )
+            radar_features = None
+            thermal_features = None
+            acoustic_features = None
 
-            thermal_features = self.feature_service.extract_thermal(
-                thermal_file
-            )
+            if radar_file is not None:
+                logger.info("Extracting Radar features...")
+                radar_features = self.feature_service.extract_radar(
+                    radar_file
+                )
 
-            acoustic_features = self.feature_service.extract_acoustic(
-                acoustic_file
-            )
+            if thermal_file is not None:
+                logger.info("Extracting Thermal features...")
+                thermal_features = self.feature_service.extract_thermal(
+                    thermal_file
+                )
+
+            if acoustic_file is not None:
+                logger.info("Extracting Acoustic features...")
+                acoustic_features = self.feature_service.extract_acoustic(
+                    acoustic_file
+                )
 
             logger.info("Feature extraction completed")
 
@@ -47,9 +58,9 @@ class InferenceService:
             # ---------------------------------------
 
             prediction = self.detector.detect(
-                radar_features,
-                thermal_features,
-                acoustic_features,
+                radar_features=radar_features,
+                thermal_features=thermal_features,
+                acoustic_features=acoustic_features,
             )
 
             logger.info(

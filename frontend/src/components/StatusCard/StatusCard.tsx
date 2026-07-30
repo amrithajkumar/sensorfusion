@@ -1,30 +1,62 @@
-type StatusCardProps = {
-	title: string
-	value: string
-	status: 'success' | 'warning' | 'error'
-}
+import Card from "../common/Card";
 
-const statusDotClassMap: Record<StatusCardProps['status'], string> = {
-	success: 'bg-green-500',
-	warning: 'bg-yellow-400',
-	error: 'bg-red-500',
-}
+type StatusCardProps = {
+  title: string;
+  value: string;
+  status: "success" | "warning" | "error";
+};
+
+const statusStyles = {
+  success: {
+    dot: "bg-green-500",
+    text: "text-green-400",
+  },
+  warning: {
+    dot: "bg-amber-500",
+    text: "text-amber-400",
+  },
+  error: {
+    dot: "bg-red-500",
+    text: "text-red-400",
+  },
+};
 
 function StatusCard({ title, value, status }: StatusCardProps) {
-	return (
-		<section className="w-full rounded-xl bg-white p-6 shadow-sm">
-			<div className="flex items-start justify-between gap-3">
-				<div className="min-w-0">
-					<p className="text-sm text-gray-500">{title}</p>
-					<p className="mt-2 text-2xl font-semibold text-gray-900">{value}</p>
-				</div>
-				<span
-					className={`mt-1 inline-block h-3 w-3 shrink-0 rounded-full ${statusDotClassMap[status]}`}
-					aria-label={`${status} status`}
-				/>
-			</div>
-		</section>
-	)
+  return (
+    <Card className="h-full">
+
+      <div className="flex h-full items-start justify-between gap-6">
+
+        <div>
+
+          <p className="text-sm font-medium uppercase tracking-[0.2em] text-slate-500">
+            {title}
+          </p>
+
+          <h2 className="mt-3 text-2xl font-semibold text-white">
+            {value}
+          </h2>
+
+        </div>
+
+        <div className="flex items-center gap-2 rounded-full border border-slate-800 bg-slate-950/60 px-3 py-1.5">
+
+          <span
+            className={`h-2.5 w-2.5 rounded-full ${statusStyles[status].dot}`}
+          />
+
+          <span
+            className={`text-sm font-medium ${statusStyles[status].text}`}
+          >
+            {status.charAt(0).toUpperCase() + status.slice(1)}
+          </span>
+
+        </div>
+
+      </div>
+
+    </Card>
+  );
 }
 
-export default StatusCard
+export default StatusCard;
