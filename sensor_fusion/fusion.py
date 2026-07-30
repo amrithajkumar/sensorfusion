@@ -1,4 +1,21 @@
-import numpy as np
+"""
+=====================================================
+Sensor Fusion
+
+Implements weighted sensor fusion.
+
+Inputs:
+    - Radar AI Probability
+    - Thermal AI Probability
+    - Acoustic AI Probability
+
+Supports:
+    - Default static weights
+    - Quantum-optimized weights
+
+Author : Quantum Fusion Team
+=====================================================
+"""
 
 
 class SensorFusion:
@@ -17,78 +34,85 @@ class SensorFusion:
         self.aw = acoustic_weight / total
 
     # ------------------------------------------------------
-
-    def normalize(self, features):
-
-        features = np.asarray(features, dtype=np.float32)
-
-        minimum = features.min()
-        maximum = features.max()
-
-        if maximum == minimum:
-            return np.zeros_like(features)
-
-        return (features - minimum) / (maximum - minimum)
-
-    # ------------------------------------------------------
-
-    def thermal_score(self, thermal_features):
-
-        thermal_features = self.normalize(thermal_features)
-
-        return float(np.mean(thermal_features))
-
+    # Weighted Fusion
     # ------------------------------------------------------
 
     def fuse(
         self,
         radar_probability,
+        thermal_probability,
         acoustic_probability,
-        thermal_features,
+        weights=None,
     ):
 
-        thermal_probability = self.thermal_score(
-            thermal_features
-        )
+        # --------------------------------------
+        # Use Quantum-Optimized Weights
+        # --------------------------------------
+
+        if weights is None:
+
+            rw = self.rw
+            tw = self.tw
+            aw = self.aw
+
+        else:
+
+            rw = weights["radar"]
+            tw = weights["thermal"]
+            aw = weights["acoustic"]
+
+        # --------------------------------------
+        # Fusion Score
+        # --------------------------------------
 
         fusion_score = (
 
-            self.rw * radar_probability +
+            rw * float(radar_probability) +
 
-            self.tw * thermal_probability +
+            tw * float(thermal_probability) +
 
-            self.aw * acoustic_probability
+            aw * float(acoustic_probability)
 
         )
 
-        detected = bool(fusion_score >= 0.50)
+        detected = fusion_score >= 0.50
+
+        # --------------------------------------
+        # Result
+        # --------------------------------------
 
         return {
 
-    "prediction": "Drone" if detected else "No Drone",
+            "prediction": "Drone" if detected else "No Drone",
 
-    "confidence": round(float(fusion_score), 4),
+            "confidence": round(float(fusion_score), 4),
 
-    "detected": detected,
+            "detected": bool(detected),
 
-    "details": {
+            "details": {
 
-        "radar_probability": round(float(radar_probability), 4),
+                "radar_probability": round(
+                    float(radar_probability), 4
+                ),
 
-        "thermal_probability": round(float(thermal_probability), 4),
+                "thermal_probability": round(
+                    float(thermal_probability), 4
+                ),
 
-        "acoustic_probability": round(float(acoustic_probability), 4),
+                "acoustic_probability": round(
+                    float(acoustic_probability), 4
+                ),
 
-        "weights": {
+                "weights": {
 
-            "radar": float(self.rw),
+                    "radar": round(float(rw), 4),
 
-            "thermal": float(self.tw),
+                    "thermal": round(float(tw), 4),
 
-            "acoustic": float(self.aw)
+                    "acoustic": round(float(aw), 4),
+
+                }
+
+            }
 
         }
-
-    }
-
-}
