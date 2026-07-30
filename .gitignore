@@ -302,3 +302,4 @@ uploads/
 __pycache__/
 *.pyc
 .venv/
+backend/ai/thermal/models/thermal_model.pkl

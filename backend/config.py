@@ -17,5 +17,13 @@ class Settings:
 
     RADAR_DIR = DATASET_DIR / "radar"
 
+    OPTIMIZATION_METRICS = {
+    "precision": 0.20,
+    "recall": 0.20,
+    "f1": 0.35,
+    "detection_rate": 0.15,
+    "false_alarm_rate": -0.10,
+}
+
 
 settings = Settings()

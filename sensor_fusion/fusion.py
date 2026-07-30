@@ -1,4 +1,21 @@
-import numpy as np
+"""
+=====================================================
+Sensor Fusion
+
+Implements weighted sensor fusion.
+
+Inputs:
+    - Radar AI Probability
+    - Thermal AI Probability
+    - Acoustic AI Probability
+
+Supports:
+    - Default static weights
+    - Quantum-optimized weights
+
+Author : Quantum Fusion Team
+=====================================================
+"""
 
 
 class SensorFusion:
@@ -17,93 +34,57 @@ class SensorFusion:
         }
 
     # ------------------------------------------------------
-
-    def normalize(self, features):
-
-        features = np.asarray(features, dtype=np.float32)
-
-        minimum = features.min()
-        maximum = features.max()
-
-        if maximum == minimum:
-            return np.zeros_like(features)
-
-        return (features - minimum) / (maximum - minimum)
-
-    # ------------------------------------------------------
-
-    def thermal_score(self, thermal_features):
-
-        thermal_features = self.normalize(thermal_features)
-
-        return float(np.mean(thermal_features))
-
+    # Weighted Fusion
     # ------------------------------------------------------
 
     def fuse(
         self,
         radar_probability=None,
+        thermal_probability=None,
         acoustic_probability=None,
-        thermal_features=None,
+        weights=None,
     ):
 
         available = {}
 
-        # -----------------------------
-        # Radar
-        # -----------------------------
         if radar_probability is not None:
             available["radar"] = float(radar_probability)
 
-        # -----------------------------
-        # Thermal
-        # -----------------------------
-        if thermal_features is not None:
-            available["thermal"] = self.thermal_score(
-                thermal_features
-            )
+        if thermal_probability is not None:
+            available["thermal"] = float(thermal_probability)
 
-        # -----------------------------
-        # Acoustic
-        # -----------------------------
         if acoustic_probability is not None:
             available["acoustic"] = float(acoustic_probability)
 
-        # -----------------------------
-        # Safety Check
-        # -----------------------------
         if len(available) < 2:
             raise ValueError(
                 "At least two sensors are required for fusion."
             )
 
-        # -----------------------------
-        # Recalculate weights
-        # -----------------------------
+        # Use quantum weights if available
+        if weights is None:
+            current_weights = self.default_weights
+        else:
+            current_weights = weights
+
         total_weight = sum(
-            self.default_weights[name]
+            current_weights[name]
             for name in available
         )
 
         normalized_weights = {}
 
         for name in available:
-
             normalized_weights[name] = (
-                self.default_weights[name] /
-                total_weight
+                current_weights[name] / total_weight
             )
 
-        # -----------------------------
-        # Weighted Fusion
-        # -----------------------------
         fusion_score = 0.0
 
         for sensor in available:
-
             fusion_score += (
-                available[sensor] *
-                normalized_weights[sensor]
+                available[sensor]
+                * normalized_weights[sensor]
             )
 
         detected = fusion_score >= 0.50
@@ -136,7 +117,10 @@ class SensorFusion:
                     else None
                 ),
 
-                "weights": normalized_weights,
+                "weights": {
+                    key: round(value, 4)
+                    for key, value in normalized_weights.items()
+                },
 
                 "active_sensors": list(
                     available.keys()
