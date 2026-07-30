@@ -105,7 +105,7 @@ class InferenceService:
             acoustic_probability = self.detector.acoustic_probability(
 
                 acoustic_features
-
+            )
             prediction = self.detector.detect(
                 radar_features=radar_features,
                 thermal_features=thermal_features,
