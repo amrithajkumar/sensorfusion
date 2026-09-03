@@ -173,6 +173,11 @@ class AcousticModel:
 
     def load_model(self):
 
+        if not self.model_path.exists():
+            fallback = Path(__file__).resolve().parent.parent / "results" / "models" / "acoustic_random_forest.pkl"
+            if fallback.exists():
+                self.model_path = fallback
+
         self.model = joblib.load(self.model_path)
 
         print("\nAcoustic Model Loaded Successfully")

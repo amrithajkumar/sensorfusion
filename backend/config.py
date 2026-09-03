@@ -17,6 +17,16 @@ class Settings:
 
     RADAR_DIR = DATASET_DIR / "radar"
 
+    RESULTS_DIR = BASE_DIR / "results"
+
+    MODELS_DIR = RESULTS_DIR / "models"
+
+    HISTORY_DIR = BASE_DIR / "history"
+
+    HISTORY_FILE = HISTORY_DIR / "predictions.json"
+
+    DEMO_DIR = DATASET_DIR / "demo"
+
     OPTIMIZATION_METRICS = {
     "precision": 0.20,
     "recall": 0.20,

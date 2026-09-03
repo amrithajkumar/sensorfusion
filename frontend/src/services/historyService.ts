@@ -1,9 +1,5 @@
-import axios from "axios";
+import { getHistory as fetchHistory, type HistoryItem } from "./api";
 
-const API_URL = "http://127.0.0.1:8000/history";
-
-export const getHistory = async () => {
-  const response = await axios.get(API_URL);
-
-  return response.data;
-};
+export const getHistory = async (): Promise<HistoryItem[]> => {
+  return fetchHistory();
+};

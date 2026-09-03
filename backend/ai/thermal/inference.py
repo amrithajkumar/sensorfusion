@@ -39,9 +39,13 @@ class ThermalInference:
         if self.model is None:
 
             if not self.model_path.exists():
-                raise FileNotFoundError(
-                    f"Model not found: {self.model_path}"
-                )
+                fallback = Path(__file__).resolve().parent / "models" / "thermal_model.pkl"
+                if fallback.exists():
+                    self.model_path = fallback
+                else:
+                    raise FileNotFoundError(
+                        f"Model not found: {self.model_path}"
+                    )
 
             self.model = joblib.load(self.model_path)
 
