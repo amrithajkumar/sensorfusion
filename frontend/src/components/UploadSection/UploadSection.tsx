@@ -5,6 +5,7 @@ import {
   Thermometer,
   Mic,
 } from "lucide-react";
+
 import Card from "../common/Card";
 import SectionHeader from "../common/SectionHeader";
 import UploadCard from "../UploadCard/UploadCard";
@@ -39,6 +40,12 @@ function UploadSection() {
         acousticFile
       );
 
+      // Store latest prediction for other pages
+      localStorage.setItem(
+        "latestPrediction",
+        JSON.stringify(prediction)
+      );
+
       console.log("Prediction Result:", prediction);
 
       alert("Prediction completed successfully!");
@@ -62,6 +69,7 @@ function UploadSection() {
 
       <Card className="space-y-6">
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+
           <UploadCard
             title="Radar"
             icon={<Radar size={28} className="text-cyan-400" />}
@@ -85,6 +93,7 @@ function UploadSection() {
             selectedFile={acousticFile}
             onFileSelect={setAcousticFile}
           />
+
         </div>
 
         <SensorStatus

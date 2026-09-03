@@ -1,76 +1,130 @@
-import {
-  Cpu,
-  Radar,
-  Thermometer,
-  Mic,
-  BrainCircuit,
-  Target,
-} from "lucide-react";
-import Card from "../../components/common/Card";
 import SectionHeader from "../../components/common/SectionHeader";
-import StatusBadge from "../../components/common/StatusBadge";
+import OptimizationPipeline from "../../components/OptimizationPipeline";
+import OptimizerCard from "../../components/OptimizerCard";
+import OptimizationGain from "../../components/OptimizationGain";
+import PredictionSummary from "../../components/PredictionSummary";
 
-const Quantum = () => {
+const prediction = JSON.parse(
+  localStorage.getItem("latestPrediction") || "{}"
+);
+
+const quantum = prediction.quantum || {};
+const classical = prediction.classical || {};
+const comparison = prediction.comparison || {};
+
+const quantumWeights = [
+  {
+    name: "Radar",
+    value: Number(((quantum.weights?.radar ?? 0) * 100).toFixed(1)),
+  },
+  {
+    name: "Thermal",
+    value: Number(((quantum.weights?.thermal ?? 0) * 100).toFixed(1)),
+  },
+  {
+    name: "Acoustic",
+    value: Number(((quantum.weights?.acoustic ?? 0) * 100).toFixed(1)),
+  },
+];
+
+const classicalWeights = [
+  {
+    name: "Radar",
+    value: Number(((classical.weights?.radar ?? 0) * 100).toFixed(1)),
+  },
+  {
+    name: "Thermal",
+    value: Number(((classical.weights?.thermal ?? 0) * 100).toFixed(1)),
+  },
+  {
+    name: "Acoustic",
+    value: Number(((classical.weights?.acoustic ?? 0) * 100).toFixed(1)),
+  },
+];
+
+function Quantum() {
   return (
     <div className="space-y-8">
       <SectionHeader
-        title="Quantum intelligence"
-        description="The UI terminology now uses BQPhy Quantum-Inspired Optimization while leaving the backend implementation untouched."
+        title="Quantum AI"
+        description="Compare Classical Fusion with BQPhy Quantum Optimization."
       />
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <Card className="space-y-5">
-          <div className="flex items-center gap-3">
-            <Cpu className="h-7 w-7 text-cyan-400" />
-            <h2 className="text-xl font-semibold text-white">
-              BQPhy Quantum-Inspired Optimization
-            </h2>
-          </div>
+      <OptimizationPipeline />
 
-          <div className="space-y-4 text-sm text-slate-400">
-            <div className="flex items-center justify-between rounded-xl border border-slate-800 bg-slate-950/40 px-4 py-3">
-              <span>Algorithm</span>
-              <span className="font-medium text-white">BQPhy Quantum-Inspired Optimization</span>
-            </div>
-            <div className="flex items-center justify-between rounded-xl border border-slate-800 bg-slate-950/40 px-4 py-3">
-              <span>Optimization</span>
-              <span className="font-medium text-white">Adaptive Weighted Fusion</span>
-            </div>
-            <div className="flex items-center justify-between rounded-xl border border-slate-800 bg-slate-950/40 px-4 py-3">
-              <span>Status</span>
-              <StatusBadge status="success" text="Active" />
-            </div>
-          </div>
-        </Card>
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
 
-        <Card className="space-y-5">
-          <div className="flex items-center gap-3">
-            <BrainCircuit className="h-7 w-7 text-cyan-400" />
-            <h2 className="text-xl font-semibold text-white">Sensor fusion flow</h2>
-          </div>
+        <OptimizerCard
+          variant="classical"
+          title="Classical Optimization"
+          subtitle="Weighted Fusion"
 
-          <div className="grid gap-3 sm:grid-cols-2">
-            <div className="flex items-center gap-3 rounded-xl border border-slate-800 bg-slate-950/40 px-4 py-3 text-slate-300"><Radar className="h-5 w-5 text-cyan-400" />Radar feature extraction</div>
-            <div className="flex items-center gap-3 rounded-xl border border-slate-800 bg-slate-950/40 px-4 py-3 text-slate-300"><Thermometer className="h-5 w-5 text-orange-400" />Thermal analysis</div>
-            <div className="flex items-center gap-3 rounded-xl border border-slate-800 bg-slate-950/40 px-4 py-3 text-slate-300"><Mic className="h-5 w-5 text-violet-400" />Acoustic classification</div>
-            <div className="flex items-center gap-3 rounded-xl border border-slate-800 bg-slate-950/40 px-4 py-3 text-slate-300"><Cpu className="h-5 w-5 text-cyan-400" />Quantum optimization</div>
-          </div>
-        </Card>
+          runtime={Number(
+            ((classical.runtime_seconds ?? 0) * 1000).toFixed(1)
+          )}
+
+          fusionScore={Number(
+            (classical.score ?? 0).toFixed(4)
+          )}
+
+          confidence={Number(
+            ((prediction.confidence ?? 0) * 100).toFixed(1)
+          )}
+
+          weights={classicalWeights}
+        />
+
+        <OptimizerCard
+          variant="quantum"
+          title="BQPhy Quantum Optimization"
+          subtitle="Quantum-Inspired Adaptive Fusion"
+
+          runtime={Number(
+            ((quantum.runtime_seconds ?? 0) * 1000).toFixed(1)
+          )}
+
+          fusionScore={Number(
+            (quantum.score ?? 0).toFixed(4)
+          )}
+
+          confidence={Number(
+            ((prediction.confidence ?? 0) * 100).toFixed(1)
+          )}
+
+          weights={quantumWeights}
+        />
+
       </div>
 
-      <Card className="space-y-5">
-        <h2 className="text-xl font-semibold text-white">Detection pipeline</h2>
+      <OptimizationGain
+        runtime={Number(
+          (comparison.quantum_improvement_percent ?? 0).toFixed(2)
+        )}
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-5">
-          <div className="flex flex-col items-center gap-3 rounded-2xl border border-slate-800 bg-slate-950/40 p-5 text-center"><Radar className="h-8 w-8 text-cyan-400" /><p className="text-sm font-medium text-white">Radar</p></div>
-          <div className="flex flex-col items-center gap-3 rounded-2xl border border-slate-800 bg-slate-950/40 p-5 text-center"><Thermometer className="h-8 w-8 text-orange-400" /><p className="text-sm font-medium text-white">Thermal</p></div>
-          <div className="flex flex-col items-center gap-3 rounded-2xl border border-slate-800 bg-slate-950/40 p-5 text-center"><Mic className="h-8 w-8 text-violet-400" /><p className="text-sm font-medium text-white">Acoustic</p></div>
-          <div className="flex flex-col items-center gap-3 rounded-2xl border border-slate-800 bg-slate-950/40 p-5 text-center"><Cpu className="h-8 w-8 text-cyan-400" /><p className="text-sm font-medium text-white">Fusion</p></div>
-          <div className="flex flex-col items-center gap-3 rounded-2xl border border-green-500/20 bg-green-500/10 p-5 text-center"><Target className="h-8 w-8 text-green-400" /><p className="text-sm font-medium text-green-300">Prediction</p></div>
-        </div>
-      </Card>
+        fusion={Number(
+          (
+            ((quantum.score ?? 0) -
+              (classical.score ?? 0)) *
+            100
+          ).toFixed(2)
+        )}
+
+        confidence={Number(
+          ((prediction.confidence ?? 0) * 100).toFixed(1)
+        )}
+      />
+
+      <PredictionSummary
+        label={prediction.prediction ?? "Unknown"}
+
+        confidence={Number(
+          ((prediction.confidence ?? 0) * 100).toFixed(1)
+        )}
+
+        threat={prediction.threat_level ?? "LOW"}
+      />
     </div>
   );
-};
+}
 
 export default Quantum;

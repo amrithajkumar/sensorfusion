@@ -10,42 +10,18 @@ import {
   Legend,
 } from "recharts";
 
+const prediction = JSON.parse(
+  localStorage.getItem("latestPrediction") || "{}"
+);
+
+const probabilities = prediction.sensor_probabilities || {};
+
 const data = [
   {
-    time: "09:00",
-    radar: 94,
-    thermal: 83,
-    acoustic: 71,
-  },
-  {
-    time: "09:05",
-    radar: 95,
-    thermal: 84,
-    acoustic: 72,
-  },
-  {
-    time: "09:10",
-    radar: 96,
-    thermal: 82,
-    acoustic: 74,
-  },
-  {
-    time: "09:15",
-    radar: 95,
-    thermal: 85,
-    acoustic: 73,
-  },
-  {
-    time: "09:20",
-    radar: 97,
-    thermal: 86,
-    acoustic: 75,
-  },
-  {
-    time: "09:25",
-    radar: 98,
-    thermal: 87,
-    acoustic: 76,
+    time: "Current",
+    radar: (probabilities.radar ?? 0) * 100,
+    thermal: (probabilities.thermal ?? 0) * 100,
+    acoustic: (probabilities.acoustic ?? 0) * 100,
   },
 ];
 
@@ -58,7 +34,7 @@ const SensorPerformanceChart = () => {
         </h2>
 
         <p className="mt-2 text-sm text-slate-400">
-          Live confidence trends across Radar, Thermal and Acoustic sensors.
+          Live confidence reported by the backend.
         </p>
       </div>
 
@@ -78,7 +54,7 @@ const SensorPerformanceChart = () => {
           />
 
           <YAxis
-            domain={[60, 100]}
+            domain={[0, 100]}
             stroke="#64748b"
             tick={{ fill: "#94a3b8", fontSize: 12 }}
             axisLine={false}
@@ -90,7 +66,7 @@ const SensorPerformanceChart = () => {
               backgroundColor: "#0f172a",
               border: "1px solid #334155",
               borderRadius: "12px",
-              color: "#fff",
+              color: "#ffffff",
             }}
           />
 
@@ -107,10 +83,8 @@ const SensorPerformanceChart = () => {
             name="Radar"
             stroke="#06b6d4"
             strokeWidth={3}
-            dot={false}
-            activeDot={{
-              r: 5,
-            }}
+            dot={{ r: 6 }}
+            activeDot={{ r: 8 }}
           />
 
           <Line
@@ -119,10 +93,8 @@ const SensorPerformanceChart = () => {
             name="Thermal"
             stroke="#f59e0b"
             strokeWidth={3}
-            dot={false}
-            activeDot={{
-              r: 5,
-            }}
+            dot={{ r: 6 }}
+            activeDot={{ r: 8 }}
           />
 
           <Line
@@ -131,10 +103,8 @@ const SensorPerformanceChart = () => {
             name="Acoustic"
             stroke="#8b5cf6"
             strokeWidth={3}
-            dot={false}
-            activeDot={{
-              r: 5,
-            }}
+            dot={{ r: 6 }}
+            activeDot={{ r: 8 }}
           />
         </LineChart>
       </ResponsiveContainer>

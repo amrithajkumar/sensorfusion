@@ -15,23 +15,6 @@ import Card from "../../components/common/Card";
 import SectionHeader from "../../components/common/SectionHeader";
 import StatusBadge from "../../components/common/StatusBadge";
 
-type PredictionDetails = {
-  radar_probability?: number;
-  thermal_probability?: number;
-  acoustic_probability?: number;
-  weights?: {
-    radar?: number;
-    thermal?: number;
-    acoustic?: number;
-  };
-};
-
-type PredictionState = {
-  prediction?: string;
-  confidence?: number;
-  detected?: boolean;
-  details?: PredictionDetails;
-};
 
 type SensorConfig = {
   key: "radar" | "thermal" | "acoustic";
@@ -50,18 +33,15 @@ const formatPercent = (value?: number) => {
   return value <= 1 ? value * 100 : value;
 };
 
-const formatNumber = (value?: number) => {
-  if (typeof value !== "number" || Number.isNaN(value)) {
-    return 0;
-  }
 
-  return value;
-};
 
 function Prediction() {
   const location = useLocation();
-  const prediction = (location.state ?? {}) as PredictionState;
-  const details = prediction.details ?? {};
+  const prediction: any = location.state ?? {};
+
+const probabilities = prediction.sensor_probabilities ?? {};
+
+const quantum = prediction.quantum ?? {};
 
   const resultLabel = prediction.prediction ?? "No prediction data";
   const isDetected =
@@ -72,37 +52,37 @@ function Prediction() {
   const confidenceValue = formatPercent(prediction.confidence);
 
   const sensors: SensorConfig[] = [
-    {
-      key: "radar",
-      label: "Radar",
-      icon: Radar,
-      color: "text-cyan-400",
-      probability: formatPercent(details.radar_probability),
-      weight: formatNumber(details.weights?.radar),
-    },
-    {
-      key: "thermal",
-      label: "Thermal",
-      icon: Thermometer,
-      color: "text-orange-400",
-      probability: formatPercent(details.thermal_probability),
-      weight: formatNumber(details.weights?.thermal),
-    },
-    {
-      key: "acoustic",
-      label: "Acoustic",
-      icon: Mic,
-      color: "text-violet-400",
-      probability: formatPercent(details.acoustic_probability),
-      weight: formatNumber(details.weights?.acoustic),
-    },
-  ];
+  {
+    key: "radar",
+    label: "Radar",
+    icon: Radar,
+    color: "text-cyan-400",
+    probability: formatPercent(probabilities.radar),
+    weight: formatPercent(quantum.weights?.radar),
+  },
+  {
+    key: "thermal",
+    label: "Thermal",
+    icon: Thermometer,
+    color: "text-orange-400",
+    probability: formatPercent(probabilities.thermal),
+    weight: formatPercent(quantum.weights?.thermal),
+  },
+  {
+    key: "acoustic",
+    label: "Acoustic",
+    icon: Mic,
+    color: "text-violet-400",
+    probability: formatPercent(probabilities.acoustic),
+    weight: formatPercent(quantum.weights?.acoustic),
+  },
+];
 
   return (
     <div className="space-y-8">
       <SectionHeader
         title="Prediction result"
-        description="This page reads the prediction returned through navigate('/prediction', { state: prediction }) and renders it without changing the existing flow."
+        description="This page reads the prediction returned through  navigate('/prediction', { state: prediction }) and renders it without changing the existing flow."
       />
 
       <div className="grid gap-6 xl:grid-cols-3">

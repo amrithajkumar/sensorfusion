@@ -3,11 +3,13 @@
 Multi-Sensor Detector
 
 Supports:
-- Radar only (feature extraction stage)
-- Thermal only (feature extraction stage)
-- Acoustic only (feature extraction stage)
+- Radar only
+- Thermal only
+- Acoustic only
 
-Fusion requires at least two available sensors.
+If the Thermal model is unavailable,
+the detector automatically falls back
+to Radar + Acoustic.
 
 =====================================================
 """
@@ -33,7 +35,31 @@ class MultiSensorDetector:
         self.acoustic_model = AcousticModel()
         self.acoustic_model.load_model()
 
-        self.thermal_model = ThermalInference()
+        # --------------------------------------------
+        # Thermal Model (Optional)
+        # --------------------------------------------
+
+        try:
+            self.thermal_model = ThermalInference()
+
+            # Force model loading here so we know immediately
+            self.thermal_model.load_model()
+
+            self.thermal_available = True
+
+            logger.info("Thermal model loaded successfully.")
+
+        except Exception as e:
+
+            logger.warning(
+                f"Thermal model unavailable. "
+                f"Continuing without Thermal Sensor.\n{e}"
+            )
+
+            self.thermal_model = None
+            self.thermal_available = False
+
+        # --------------------------------------------
 
         self.fusion = SensorFusion()
 
@@ -44,39 +70,68 @@ class MultiSensorDetector:
     def radar_probability(self, radar_features):
 
         if radar_features is None:
-            return None
+            return 0.0
 
-        return float(
-            self.radar_model.predict_proba(
-                radar_features
+        try:
+
+            return float(
+                self.radar_model.predict_proba(
+                    radar_features
+                )
             )
-        )
+
+        except Exception as e:
+
+            logger.warning(f"Radar prediction failed: {e}")
+
+            return 0.0
 
     # ==================================================
 
     def acoustic_probability(self, acoustic_features):
 
         if acoustic_features is None:
-            return None
+            return 0.0
 
-        return float(
-            self.acoustic_model.predict_proba(
-                acoustic_features
+        try:
+
+            return float(
+                self.acoustic_model.predict_proba(
+                    acoustic_features
+                )
             )
-        )
+
+        except Exception as e:
+
+            logger.warning(f"Acoustic prediction failed: {e}")
+
+            return 0.0
 
     # ==================================================
 
     def thermal_probability(self, thermal_features):
 
         if thermal_features is None:
-            return None
+            return 0.0
 
-        return float(
-            self.thermal_model.drone_probability(
-                thermal_features
+        if not self.thermal_available:
+            return 0.0
+
+        try:
+
+            return float(
+                self.thermal_model.drone_probability(
+                    thermal_features
+                )
             )
-        )
+
+        except Exception as e:
+
+            logger.warning(
+                f"Thermal prediction skipped: {e}"
+            )
+
+            return 0.0
 
     # ==================================================
 
