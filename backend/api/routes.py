@@ -1,6 +1,7 @@
 from typing import Optional
 
 from fastapi import APIRouter, File, HTTPException, UploadFile
+from fastapi.responses import FileResponse
 
 from backend.config import settings
 from backend.logs.logger import logger
@@ -33,6 +34,27 @@ def dataset_summary():
     logger.info("Dataset summary requested")
 
     return dataset_service.get_dataset_summary()
+
+
+@router.get("/demo-sample/{sensor_type}")
+def get_demo_sample(sensor_type: str):
+    sensor_type = sensor_type.lower()
+    demo_dir = settings.DEMO_DIR / sensor_type
+    if not demo_dir.exists():
+        raise HTTPException(status_code=404, detail=f"Demo directory for {sensor_type} not found")
+
+    files = sorted([f for f in demo_dir.glob("*.*") if f.is_file()])
+    if not files:
+        raise HTTPException(status_code=404, detail=f"No demo files found for {sensor_type}")
+
+    # Use first representative file
+    sample_file = files[0]
+    logger.info(f"Serving demo sample for {sensor_type}: {sample_file.name}")
+    return FileResponse(
+        path=sample_file,
+        filename=sample_file.name,
+        media_type="application/octet-stream"
+    )
 
 
 # ------------------------------

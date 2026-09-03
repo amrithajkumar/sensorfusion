@@ -303,3 +303,5 @@ __pycache__/
 *.pyc
 .venv/
 backend/ai/thermal/models/thermal_model.pkl
+final_population_real_values.csv
+kill_switch.txt

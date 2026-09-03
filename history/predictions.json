@@ -159,5 +159,124 @@
         "sensor": "Radar + Thermal + Acoustic",
         "prediction": "Drone",
         "confidence": 0.6385
+    },
+    {
+        "timestamp": "2026-09-03T22:03:44.223541",
+        "filename": "radar.npy, thermal.jpg, acoustic.wav",
+        "sensor": "Radar + Thermal + Acoustic",
+        "prediction": "Drone",
+        "confidence": 0.9979
+    },
+    {
+        "timestamp": "2026-09-03T22:06:55.033269",
+        "filename": "demo_radar.npy, demo_thermal.jpg, demo_acoustic.wav",
+        "sensor": "Radar + Thermal + Acoustic",
+        "prediction": "No Drone",
+        "confidence": 0.0964
+    },
+    {
+        "timestamp": "2026-09-03T22:09:40.479969",
+        "filename": "sample_062.npy, IR_DRONE_001_000032.png, B_S2_D1_075-bebop_000_.wav",
+        "sensor": "Radar + Thermal + Acoustic",
+        "prediction": "Drone",
+        "confidence": 0.9494
+    },
+    {
+        "timestamp": "2026-09-03T22:11:08.438351",
+        "filename": "sample_037.npy, IR_BIRD_001_000028.png, 1-100032-A-03.wav",
+        "sensor": "Radar + Thermal + Acoustic",
+        "prediction": "Drone",
+        "confidence": 1.0
+    },
+    {
+        "timestamp": "2026-09-03T22:14:31.953654",
+        "filename": "sample_047.npy, IR_AIRPLANE_001_000007.png, 1-17742-A-122.wav",
+        "sensor": "Radar + Thermal + Acoustic",
+        "prediction": "No Drone",
+        "confidence": 0.0617
+    },
+    {
+        "timestamp": "2026-09-03T22:58:56.403891",
+        "filename": "demo_radar.npy, demo_thermal.jpg, demo_acoustic.wav",
+        "sensor": "Radar + Thermal + Acoustic",
+        "prediction": "No Drone",
+        "confidence": 0.0964
+    },
+    {
+        "timestamp": "2026-09-03T23:11:05.324442",
+        "filename": "demo_radar.npy, demo_thermal.jpg, demo_acoustic.wav",
+        "sensor": "Radar + Thermal + Acoustic",
+        "prediction": "No Drone",
+        "confidence": 0.0964
+    },
+    {
+        "timestamp": "2026-09-03T23:12:25.005958",
+        "filename": "sample_126.npy, IR_DRONE_001_000042.png, B_S2_D1_077-bebop_001_.wav",
+        "sensor": "Radar + Thermal + Acoustic",
+        "prediction": "Drone",
+        "confidence": 0.9989
+    },
+    {
+        "timestamp": "2026-09-03T23:13:51.416005",
+        "filename": "demo_radar.npy, demo_thermal.jpg, demo_acoustic.wav",
+        "sensor": "Radar + Thermal + Acoustic",
+        "prediction": "No Drone",
+        "confidence": 0.0964
+    },
+    {
+        "timestamp": "2026-09-03T23:15:39.223687",
+        "filename": "sample_097.npy, IR_HELICOPTER_001_000022.png, 1-115546-A-483.wav",
+        "sensor": "Radar + Thermal + Acoustic",
+        "prediction": "No Drone",
+        "confidence": 0.0033
+    },
+    {
+        "timestamp": "2026-09-03T23:21:02.984902",
+        "filename": "sample_066.npy, IR_DRONE_001_000057.png, B_S2_D1_085-bebop_004_.wav",
+        "sensor": "Radar + Thermal + Acoustic",
+        "prediction": "Drone",
+        "confidence": 0.9969
+    },
+    {
+        "timestamp": "2026-09-03T23:39:47.167425",
+        "filename": "demo_radar.npy, demo_thermal.jpg, demo_acoustic.wav",
+        "sensor": "Radar + Thermal + Acoustic",
+        "prediction": "No Drone",
+        "confidence": 0.0964
+    },
+    {
+        "timestamp": "2026-09-03T23:42:49.249260",
+        "filename": "demo_radar.npy, demo_thermal.jpg, demo_acoustic.wav",
+        "sensor": "Radar + Thermal + Acoustic",
+        "prediction": "No Drone",
+        "confidence": 0.0964
+    },
+    {
+        "timestamp": "2026-09-03T23:49:25.614648",
+        "filename": "sample_005.npy, IR_DRONE_001_000017.png, B_S2_D1_074-bebop_002_.wav",
+        "sensor": "Radar + Thermal + Acoustic",
+        "prediction": "Drone",
+        "confidence": 0.9446
+    },
+    {
+        "timestamp": "2026-09-03T23:50:36.257635",
+        "filename": "demo_radar.npy, demo_thermal.jpg, demo_acoustic.wav",
+        "sensor": "Radar + Thermal + Acoustic",
+        "prediction": "No Drone",
+        "confidence": 0.0964
+    },
+    {
+        "timestamp": "2026-09-03T23:53:28.882211",
+        "filename": "sample_048.npy, IR_DRONE_001_000027.png, B_S2_D1_090-bebop_000_.wav",
+        "sensor": "Radar + Thermal + Acoustic",
+        "prediction": "Drone",
+        "confidence": 0.9594
+    },
+    {
+        "timestamp": "2026-09-03T23:54:07.031631",
+        "filename": "demo_radar.npy, demo_thermal.jpg, demo_acoustic.wav",
+        "sensor": "Radar + Thermal + Acoustic",
+        "prediction": "No Drone",
+        "confidence": 0.0964
     }
 ]

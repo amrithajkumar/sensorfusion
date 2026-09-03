@@ -2,6 +2,7 @@ import json
 from datetime import datetime
 from pathlib import Path
 
+from backend.config import settings
 from backend.logs.logger import logger
 
 
@@ -9,7 +10,7 @@ class HistoryService:
 
     def __init__(self):
 
-        self.history_file = Path("history") / "predictions.json"
+        self.history_file = settings.HISTORY_FILE
 
         self.history_file.parent.mkdir(
             parents=True,
